@@ -1,0 +1,25 @@
+{
+  "name": "72912-typoteka-3",
+  "version": "1.0.0",
+  "description": "Типотека",
+  "main": "./src/service/service.js",
+  "scripts": {
+    "test": "npm run eslint",
+    "start": "node ./src/service/service.js",
+    "eslint": "eslint --ext .js src/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rockn1989/72912-typoteka-3.git"
+  },
+  "author": "Рябков Артем",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rockn1989/72912-typoteka-3/issues"
+  },
+  "homepage": "https://github.com/rockn1989/72912-typoteka-3#readme",
+  "devDependencies": {
+    "eslint": "7.32.0",
+    "eslint-config-htmlacademy": "4.0.2"
+  }
+}
