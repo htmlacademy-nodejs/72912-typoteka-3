@@ -1,17 +1,26 @@
 'use strict';
 
-module.exports.DEFAULT_COMMAND = `--help`;
+const DEFAULT_COMMAND = `--help`;
 
-module.exports.DEFAULT_POSTS_VALUE = 1;
+const DEFAULT_POSTS_VALUE = 1;
 
-module.exports.USER_ARGV_INDEX = 2;
+const USER_ARGV_INDEX = 2;
 
-module.exports.MAX_POSTS = 1000;
+const MAX_POSTS = 1000;
 
-module.exports.FIRST_POST_MONTH = 3;
+const FIRST_POST_MONTH = 3;
 
-module.exports.ExitCode = {
+const ExitCode = {
   error: 1,
   succes: 0
+};
+
+module.exports = {
+  DEFAULT_COMMAND,
+  DEFAULT_POSTS_VALUE,
+  USER_ARGV_INDEX,
+  MAX_POSTS,
+  FIRST_POST_MONTH,
+  ExitCode
 };
 

@@ -20,44 +20,18 @@ const shuffle = (someArray) => {
   return someArray;
 };
 
-const getRandomTime = () => {
-  let hours = getRandomInt(0, 24);
-  let minutes = getRandomInt(0, 59);
-  let seconds = getRandomInt(0, 59);
-
-  hours = hours < 10 ? `0${hours}` : hours;
-  minutes = minutes < 10 ? `0${minutes}` : minutes;
-  seconds = seconds < 10 ? `0${seconds}` : seconds;
-
-  return `${hours}:${minutes}:${seconds}`;
-};
-
 const getRandomDate = () => {
-  const currentYear = new Date().getFullYear();
-  const currentMonth = new Date().getMonth() + 1;
 
-  let randomMonth = (getRandomInt(new Date().getMonth() - FIRST_POST_MONTH, new Date().getMonth())) + 1;
-  let randomDay = getRandomInt(1, new Date(new Date().getFullYear(), randomMonth, 0).getDate());
+  const dateNow = new Date();
+  const dateOld = new Date().setMonth(new Date().getMonth() - 3);
+  const randomDate = new Date(getRandomInt(dateOld, +dateNow));
 
-  if (randomMonth === currentMonth) {
-
-    if (randomDay > new Date().getDate()) {
-
-      randomDay = new Date().getDate();
-    }
-  }
-
-  randomDay = randomDay < 10 ? `0${randomDay}` : randomDay;
-  randomMonth = randomMonth < 10 ? `0${randomMonth}` : randomMonth;
-
-
-  return `${currentYear}-${randomMonth}-${randomDay} ${getRandomTime()}`;
+  return randomDate.toLocaleString();
 };
 
 
 module.exports = {
   getRandomInt,
   shuffle,
-  getRandomTime,
   getRandomDate
 };

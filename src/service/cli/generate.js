@@ -85,7 +85,7 @@ module.exports = {
 
     const content = JSON.stringify(generatePosts(countPosts));
 
-    fs.writeFile(`mocks.json`, content, (err) => {
+    fs.writeFile(`mock.json`, content, (err) => {
       if (err) {
         console.log(`Can't write data to file...`);
         process.exit(ExitCode.error);
