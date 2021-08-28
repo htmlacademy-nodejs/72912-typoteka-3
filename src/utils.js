@@ -1,7 +1,5 @@
 'use strict';
 
-const {FIRST_POST_MONTH} = require(`./constans`);
-
 const getRandomInt = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
