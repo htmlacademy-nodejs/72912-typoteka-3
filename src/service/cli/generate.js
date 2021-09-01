@@ -1,6 +1,7 @@
 'use strict';
 
-const fs = require(`fs`);
+const fs = require(`fs`).promises;
+const chalk = require(`chalk`);
 
 const {
   DEFAULT_POSTS_VALUE,
@@ -74,26 +75,25 @@ const generatePosts = (count) => {
 
 module.exports = {
   name: `--generate`,
-  run(args) {
+  async run(args) {
     const [count] = args;
     const countPosts = Number.parseInt(count, 10) || DEFAULT_POSTS_VALUE;
 
     if (countPosts > MAX_POSTS) {
-      console.log(`Не больше 1000 публикаций`);
+      console.info(chalk.red(`Не больше 1000 публикаций`));
       process.exit(ExitCode.error);
     }
 
     const content = JSON.stringify(generatePosts(countPosts));
 
-    fs.writeFile(`mock.json`, content, (err) => {
-      if (err) {
-        console.log(`Can't write data to file...`);
-        process.exit(ExitCode.error);
-      }
-
-      console.info(`Operation success. File created`);
+    try {
+      await fs.writeFile(`mock.json`, content);
+      console.info(chalk.green(`Operation success. File created`));
       process.exit(ExitCode.succes);
-    });
+    } catch (err) {
+      console.info(chalk.red(`Can't write data to file...`));
+      process.exit(ExitCode.error);
+    }
 
   }
 };
