@@ -1,22 +1,14 @@
 'use strict';
 
-const fs = require(`fs`).promises;
 const express = require(`express`);
 const chalk = require(`chalk`);
-const {DEFAULT_PORT, HttpCode} = require(`../../constans`);
+const {DEFAULT_PORT, HttpCode, API_PREFIX} = require(`../../constans`);
+const routes = require(`../api`);
 
 const app = express();
 app.use(express.json());
 
-app.get(`/posts`, async (req, res) => {
-  try {
-    const content = await fs.readFile(`mock.json`, `utf-8`);
-    const mocks = JSON.parse(content);
-    res.json(mocks);
-  } catch (err) {
-    res.send([]);
-  }
-});
+app.use(API_PREFIX, routes);
 
 app.use((req, res) => {
   res.status(HttpCode.NOT_FOUND).send(`Not found`);

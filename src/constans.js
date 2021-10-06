@@ -10,9 +10,16 @@ const USER_ARGV_INDEX = 2;
 
 const MAX_POSTS = 1000;
 
+const MAX_ID_LENGTH = 6;
+
+const MAX_COMMENTS = 4;
+
+const API_PREFIX = `/api`;
+
 const PATH_OF_CATEGORIES = `./data/categories.txt`;
 const PATH_OF_SENTENCES = `./data/sentences.txt`;
 const PATH_OF_TITLES = `./data/titles.txt`;
+const PATH_OF_COMMENTS = `./data/comments.txt`;
 
 const ExitCode = {
   error: 1,
@@ -21,10 +28,13 @@ const ExitCode = {
 
 const HttpCode = {
   OK: 200,
+  CREATED: 201,
+  DELETED: 204,
   NOT_FOUND: 404,
   INTERNAL_SERVER_ERROR: 500,
   FORBIDDEN: 403,
   UNAUTHORIZED: 401,
+  BAD_REQUEST: 400,
 };
 
 module.exports = {
@@ -37,6 +47,10 @@ module.exports = {
   HttpCode,
   PATH_OF_CATEGORIES,
   PATH_OF_SENTENCES,
-  PATH_OF_TITLES
+  PATH_OF_TITLES,
+  PATH_OF_COMMENTS,
+  MAX_ID_LENGTH,
+  MAX_COMMENTS,
+  API_PREFIX
 };
 
