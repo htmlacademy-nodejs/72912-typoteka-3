@@ -16,7 +16,7 @@ class ArticleService {
   }
 
   drop(id) {
-    const article = this._articles.find((item) => item.id === id);
+    const article = this.findOne(id);
 
     if (!article) {
       return null;
@@ -36,6 +36,10 @@ class ArticleService {
 
   update(id, article) {
     const oldArticle = this._articles.find((item) => item.id === id);
+
+    if (!oldArticle) {
+      return null;
+    }
 
     return Object.assign(oldArticle, article);
   }

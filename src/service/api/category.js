@@ -3,10 +3,10 @@
 const {Router} = require(`express`);
 const {HttpCode} = require(`../../constans`);
 
-const route = new Router();
-
 module.exports = (app, service) => {
-  app.use(`/categories`, route);
+  const route = new Router();
+
+  app.use(`/category`, route);
 
   route.get(`/`, async (req, res) => {
     const categories = await service.findAll();

@@ -3,13 +3,16 @@
 const {Router} = require(`express`);
 const {HttpCode} = require(`../../constans`);
 
-const route = new Router();
-
 module.exports = (app, searchService) => {
+  const route = new Router();
   app.use(`/search`, route);
 
   route.get(`/`, (req, res) => {
     const {query} = req.query;
+
+    if (!query) {
+      return res.status(HttpCode.BAD_REQUEST).send(`Bad request`);
+    }
 
     const searchResult = searchService.findAll(query.toLowerCase());
     if (!searchResult) {

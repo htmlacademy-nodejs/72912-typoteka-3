@@ -8,9 +8,9 @@ const articleExist = require(`../middleware/article-exist`);
 const {HttpCode} = require(`../../constans`);
 
 
-const route = new Router();
-
 module.exports = (app, articleService, commentService) => {
+  const route = new Router();
+
   app.use(`/articles`, route);
 
   route.get(`/`, (req, res) => {
@@ -50,7 +50,7 @@ module.exports = (app, articleService, commentService) => {
     return res.status(HttpCode.CREATED).json(article);
   });
 
-  route.put(`/:articleId`, (req, res) => {
+  route.put(`/:articleId`, articleValidator, (req, res) => {
     const {articleId} = req.params;
     const article = articleService.update(articleId, req.body);
 
@@ -58,7 +58,7 @@ module.exports = (app, articleService, commentService) => {
       return res.status(HttpCode.NOT_FOUND).send(`Not found with ${articleId}`);
     }
 
-    return res.status(HttpCode.OK).send(`update`);
+    return res.status(HttpCode.OK).json(article);
   });
 
   route.delete(`/:articleId`, (req, res) => {
@@ -75,7 +75,7 @@ module.exports = (app, articleService, commentService) => {
       return res.status(HttpCode.FORBIDDEN).send(`Not found with ${articleId}`);
     }
 
-    return res.status(HttpCode.DELETED).send(`deleted`);
+    return res.status(HttpCode.OK).json(deletedArticle);
   });
 
   route.delete(`/:articleId/comments/:commentId`, (req, res) => {
