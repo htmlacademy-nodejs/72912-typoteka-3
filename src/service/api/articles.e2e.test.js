@@ -168,7 +168,7 @@ describe(`API refuses to create an article if data is invalid`, () => {
         .post(`/articles`)
         .send(badArticle)
         .expect(HttpCode.BAD_REQUEST);
-    };
+    }
   });
 });
 
@@ -216,13 +216,12 @@ describe(`API correctly deletes an article`, () => {
 
   test(`Returns deleted articles`, () => expect(response.body.id).toBe(`Fg0ikD`));
 
-  test(`Article count is 3 now`, async () => {
+  test(`Article count is 2 now`, async () => {
     const articleResponse = await request(app).get(`/articles`);
-    expect(articleResponse.body.length).toBe(3);
+    expect(articleResponse.body.length).toBe(2);
   });
 
   test(`API refuses to delete non-existent article`, () => {
-    const app = createAPI();
 
     return request(app)
       .delete(`/articles/NOEXST`)

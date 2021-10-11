@@ -8,9 +8,9 @@ const articleExist = require(`../middleware/article-exist`);
 const {HttpCode} = require(`../../constans`);
 
 
-const route = new Router();
-
 module.exports = (app, articleService, commentService) => {
+  const route = new Router();
+
   app.use(`/articles`, route);
 
   route.get(`/`, (req, res) => {

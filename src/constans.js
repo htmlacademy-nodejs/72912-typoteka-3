@@ -20,6 +20,7 @@ const PATH_OF_CATEGORIES = `./data/categories.txt`;
 const PATH_OF_SENTENCES = `./data/sentences.txt`;
 const PATH_OF_TITLES = `./data/titles.txt`;
 const PATH_OF_COMMENTS = `./data/comments.txt`;
+const PATH_OF_API_LOG = `./logs/api.log`;
 
 const ExitCode = {
   error: 1,
@@ -37,6 +38,11 @@ const HttpCode = {
   BAD_REQUEST: 400,
 };
 
+const Env = {
+  DEVELOPMENT: `development`,
+  PRODUCTION: `production`
+};
+
 module.exports = {
   DEFAULT_COMMAND,
   DEFAULT_POSTS_VALUE,
@@ -49,8 +55,10 @@ module.exports = {
   PATH_OF_SENTENCES,
   PATH_OF_TITLES,
   PATH_OF_COMMENTS,
+  PATH_OF_API_LOG,
   MAX_ID_LENGTH,
   MAX_COMMENTS,
-  API_PREFIX
+  API_PREFIX,
+  Env
 };
 
