@@ -11,6 +11,10 @@ module.exports = (app, searchService) => {
   route.get(`/`, (req, res) => {
     const {query} = req.query;
 
+    if (!query) {
+      return res.status(HttpCode.BAD_REQUEST).send(`Bad request`);
+    }
+
     const searchResult = searchService.findAll(query.toLowerCase());
     if (!searchResult) {
       return res.status(HttpCode.NOT_FOUND).send(`Not Found`);
