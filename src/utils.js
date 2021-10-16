@@ -27,9 +27,11 @@ const getRandomDate = () => {
   return randomDate.toLocaleString();
 };
 
+const ensureArray = (value) => Array.isArray(value) ? value : [value];
 
 module.exports = {
   getRandomInt,
   shuffle,
-  getRandomDate
+  getRandomDate,
+  ensureArray
 };

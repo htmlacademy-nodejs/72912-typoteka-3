@@ -1,0 +1,24 @@
+section.main-page__list.preview
+  h2.visually-hidden Список превью статей
+  ul.preview__list
+    each article in articles
+      li.preview__item
+        ul.preview__breadcrumbs
+          each category in article.category
+            li.preview__breadcrumbs-item
+              a.preview__breadcrumbs-link(href='/categories/') #{category}
+        .preview__background
+          img.preview__background-image(
+            src=article.picture ? `/img/${article.picture}` : 'skyscraper@1x.jpg'
+            width='460'
+            height='240'
+            srcset=article.picture ? `/img/${article.picture}` : 'img/skyscraper@1x.jpg 1x, img/skyscraper@2x.jpg 2x' alt='Фотография небоскреба'
+          )
+        time.preview__time(datetime=article.createDate) #{article.createDate}
+        h3.preview__name
+          a.preview__name-link(href=`/articles/${article.id}`) #{article.title}
+        p.preview__text #{article.announce}
+        a.preview__comment(href=`/articles/${article.id}/comments/`)
+          | Комментарии
+          span.preview__cloud
+          b.preview__comment-count #{article.comments.length}
