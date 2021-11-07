@@ -17,7 +17,7 @@ CREATE TABLE articles(
   title varchar(255) NOT NULL,
   create_at timestamp DEFAULT CURRENT_TIMESTAMP,
   picture varchar(50) NOT NULL,
-  annouce text NOT NULL,
+  announce text NOT NULL,
   full_text text NOT NULL,
   user_id integer NOT NULL,
   FOREIGN KEY (user_id) REFERENCES users(id)
