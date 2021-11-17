@@ -6,6 +6,7 @@ const {DEFAULT_PORT, HttpCode, API_PREFIX} = require(`../../constans`);
 const {getLogger} = require(`../lib/logger`);
 const logger = getLogger({name: `api`});
 const routes = require(`../api`);
+const sequelize = require(`../lib/sequelize`);
 
 const app = express();
 app.use(express.json());
@@ -32,7 +33,18 @@ app.use((err, _req, _res, _next) => {
 
 module.exports = {
   name: `--server`,
-  run(args) {
+  async run(args) {
+
+    try {
+      logger.info(chalk.yellowBright(`Соединение с БД...`));
+      await sequelize.authenticate();
+    } catch (err) {
+      logger.info(chalk.red(`Не удалось установить соединение с БД: ${err.message}`));
+      process.exit(1);
+    }
+
+    logger.info(chalk.green(`Соединение с БД установлено`));
+
     const port = parseInt(args, 10) || DEFAULT_PORT;
     app
       .listen(port, () => {
