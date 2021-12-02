@@ -2,118 +2,124 @@
 
 const express = require(`express`);
 const request = require(`supertest`);
+const Sequelize = require(`sequelize`);
 
-const {HttpCode} = require(`../../constans`);
+const initDB = require(`../lib/init-db`);
+
 const articles = require(`./articles`);
 const ArticleService = require(`../data-service/articles`);
 const CommentService = require(`../data-service/comment`);
 
-const mockData = [
+const {HttpCode} = require(`../../constans`);
+
+const mockArticles = [
   {
-    "id": `Fg0ikD`,
-    "user": `ivanov@example.com`,
-    "category": [
-      `Журналы`
-    ],
-    "comments": [
-      {
-        "user": `ivanov@example.com`,
-        "text": `Почему в таком ужасном состоянии?`
-      },
-      {
-        "user": `petrov@example.com`,
-        "text": `Продаю в связи с переездом. Отрываю от сердца. А где блок питания?`
-      }
-    ],
-    "description": `Таких предложений больше нет! Это настоящая находка для коллекционера! При покупке с меня бесплатная доставка в черте города. Если найдёте дешевле — сброшу цену.`,
-    "picture": `item09.jpg`,
     "title": `Продам новую приставку Sony Playstation 5`,
-    "type": `SALE`,
-    "sum": 79555
-  },
-  {
-    "id": `E7qAM5`,
-    "user": `petrov@example.com`,
-    "category": [
-      `Игры`,
-    ],
+    "announce": `Анонс`,
+    "fullText": `Таких предложений больше нет! Это настоящая находка для коллекционера! При покупке с меня бесплатная доставка в черте города. Если найдёте дешевле — сброшу цену.`,
+    "picture": `item09.jpg`,
+    "categories": [`Журналы`],
     "comments": [
       {
-        "user": `ivanov@example.com`,
         "text": `Неплохо, но дорого. Совсем немного... Оплата наличными или перевод на карту?`
       },
       {
-        "user": `petrov@example.com`,
         "text": `С чем связана продажа? Почему так дешёво? Вы что?! В магазине дешевле. Продаю в связи с переездом. Отрываю от сердца.`
       },
       {
-        "user": `ivanov@example.com`,
         "text": `Неплохо, но дорого. Совсем немного...`
       },
       {
-        "user": `petrov@example.com`,
         "text": `Вы что?! В магазине дешевле.`
       }
     ],
-    "description": `При покупке с меня бесплатная доставка в черте города. Даю недельную гарантию. Это настоящая находка для коллекционера! Бонусом отдам все аксессуары.`,
-    "picture": `item02.jpg`,
-    "title": `Продам отличную подборку фильмов на VHS`,
-    "type": `SALE`,
-    "sum": 55460
   },
   {
-    "id": `lVQQlp`,
-    "user": `ivanov@example.com`,
-    "category": [
-      `Животные`
-    ],
+    "title": `Куплю слона`,
+    "announce": `Анонс`,
+    "fullText": `Таких предложений больше нет! Это настоящая находка для коллекционера! При покупке с меня бесплатная доставка в черте города. Если найдёте дешевле — сброшу цену.`,
+    "picture": `item09.jpg`,
+    "categories": [`Игры`],
     "comments": [
       {
-        "user": `petrov@example.com`,
-        "text": `Оплата наличными или перевод на карту? Продаю в связи с переездом. Отрываю от сердца. С чем связана продажа? Почему так дешёво?`
+        "text": `Неплохо, но дорого. Совсем немного... Оплата наличными или перевод на карту?`
+      },
+      {
+        "text": `С чем связана продажа? Почему так дешёво? Вы что?! В магазине дешевле. Продаю в связи с переездом. Отрываю от сердца.`
+      },
+      {
+        "text": `Неплохо, но дорого. Совсем немного...`
+      },
+      {
+        "text": `Вы что?! В магазине дешевле.`
       }
     ],
-    "description": `Даю недельную гарантию. Продаю с болью в сердце... Товар в отличном состоянии. Если найдёте дешевле — сброшу цену.`,
-    "picture": `item12.jpg`,
-    "title": `Куплю породистого кота`,
-    "type": `SALE`,
-    "sum": 81801
+  },
+  {
+    "title": `200 совет для улучшения здоровья`,
+    "announce": `Анонс`,
+    "fullText": `Таких предложений больше нет! Это настоящая находка для коллекционера! При покупке с меня бесплатная доставка в черте города. Если найдёте дешевле — сброшу цену.`,
+    "picture": `item09.jpg`,
+    "categories": [`Животные`],
+    "comments": [
+      {
+        "text": `Неплохо, но дорого. Совсем немного... Оплата наличными или перевод на карту?`
+      },
+      {
+        "text": `С чем связана продажа? Почему так дешёво? Вы что?! В магазине дешевле. Продаю в связи с переездом. Отрываю от сердца.`
+      },
+      {
+        "text": `Неплохо, но дорого. Совсем немного...`
+      },
+      {
+        "text": `Вы что?! В магазине дешевле.`
+      }
+    ],
   }
 ];
 
-const createAPI = () => {
+const mockCategories = [
+  `Журналы`,
+  `Игры`,
+  `Животные`
+];
+
+const createAPI = async () => {
+  const mockDB = new Sequelize(`sqlite::memory`, {logging: false});
+  await initDB(mockDB, {categories: mockCategories, articles: mockArticles});
+
   const app = express();
-  const cloneData = JSON.parse(JSON.stringify(mockData));
   app.use(express.json());
-  articles(app, new ArticleService(cloneData), new CommentService(cloneData));
+  articles(app, new ArticleService(mockDB), new CommentService(mockDB));
+
   return app;
 };
 
 
 describe(`API returns a list of all articles`, () => {
-  const app = createAPI();
-
+  let app;
   let response;
 
   beforeAll(async () => {
-    response = await request(app).get(`/articles`);
+    app = await createAPI();
+    response = await request(app).get(`/articles/?comments=true`);
   });
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
   test(`Returns a list of 3 articles`, () => expect(response.body.length).toBe(3));
 
-  test(`First article's id quals "Fg0ikD"`, () => expect(response.body[0].id).toBe(`Fg0ikD`));
+  test(`First article's id equals 16`, () => expect(response.body[0].id).toBe(1));
 
 });
 
 describe(`API returns as article with given id`, () => {
-  const app = createAPI();
-
+  let app;
   let response;
 
   beforeAll(async () => {
-    response = await request(app).get(`/articles/Fg0ikD`);
+    app = await createAPI();
+    response = await request(app).get(`/articles/1`);
   });
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
@@ -121,20 +127,21 @@ describe(`API returns as article with given id`, () => {
   test(`Articles title is "Продам новую приставку Sony Playstation 5"`, () => expect(response.body.title).toBe(`Продам новую приставку Sony Playstation 5`));
 });
 
-
 describe(`API creates an article if data is valid`, () => {
-  const newArticle = {
-    title: `Котики`,
-    createDate: `10-10-2021`,
-    category: [`Животные`, `Игры`],
-    announce: `Супер кот`,
-  };
-
-  const app = createAPI();
-
+  let newArticle;
+  let app;
   let response;
 
   beforeAll(async () => {
+    app = await createAPI();
+    newArticle = {
+      title: `Котики`,
+      categories: [1, 2],
+      announce: `Супер кот`,
+      fullText: `Javascript любят все программисты мира`,
+      userId: 9,
+    };
+
     response = await request(app)
       .post(`/articles`)
       .send(newArticle);
@@ -142,7 +149,9 @@ describe(`API creates an article if data is valid`, () => {
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.CREATED));
 
-  test(`Returns article created`, () => expect(response.body).toEqual(expect.objectContaining(newArticle)));
+  test(`Returns article created`, () => expect(response.body).toEqual(expect.objectContaining({
+    announce: `Супер кот`,
+  })));
 
   test(`Articles count is changed`, () => request(app)
     .get(`/articles`)
@@ -151,70 +160,77 @@ describe(`API creates an article if data is valid`, () => {
 });
 
 describe(`API refuses to create an article if data is invalid`, () => {
-  const newArticle = {
-    title: `Котики`,
-    createDate: `10-10-2021`,
-    announce: `Супер кот`,
-    category: [`Животные`, `Игры`],
-  };
+  let app;
+  let newArticle;
 
-  const app = createAPI();
+  beforeAll(async () => {
+    app = await createAPI();
+    newArticle = {
+      title: `Котики`,
+      categories: [1, 2],
+      announce: `Супер кот`,
+      fullText: `Javascript любят все программисты мира`,
+      userId: 9,
+    };
+  });
 
   test(`Without any required property response code is 400`, async () => {
+    const badArticle = {...newArticle};
+
     for (const key of Object.keys(newArticle)) {
-      const badArticle = {...newArticle};
       delete badArticle[key];
-      await request(app)
+
+      return await request(app)
         .post(`/articles`)
         .send(badArticle)
         .expect(HttpCode.BAD_REQUEST);
     }
+
+    return null;
   });
 });
 
-
 describe(`API changes existent article`, () => {
   const newArticle = {
-    title: `Котики`,
+    title: `КотМики`,
     createDate: `10-10-2021`,
     announce: `Супер кот`,
     fullText: `Супер кот, который умеет верстать!`,
-    category: [`Животные`, `Игры`],
+    categories: [`Животные`, `Игры`],
   };
 
-  const app = createAPI();
-
+  let app;
   let response;
 
   beforeAll(async () => {
+    app = await createAPI();
     response = await request(app)
-      .put(`/articles/Fg0ikD`)
+      .put(`/articles/1`)
       .send(newArticle);
   });
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
-  test(`Returns changed article`, () => expect(response.body).toEqual(expect.objectContaining(newArticle)));
+  test(`Returns changed article`, () => expect(response.body).toBe(true));
 
   test(`Article is really changed`, () => request(app)
-    .get(`/articles/Fg0ikD`)
-    .expect((res) => expect(res.body.title).toBe(`Котики`))
+    .get(`/articles/1`)
+    .expect((res) => expect(res.body.title).toBe(`КотМики`))
   );
 
 });
 
 describe(`API correctly deletes an article`, () => {
-  const app = createAPI();
+  let app;
   let response;
 
   beforeAll(async () => {
+    app = await createAPI();
     response = await request(app)
-      .delete(`/articles/Fg0ikD`);
+      .delete(`/articles/1`);
   });
 
-  test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
-
-  test(`Returns deleted articles`, () => expect(response.body.id).toBe(`Fg0ikD`));
+  test(`Status code 204`, () => expect(response.statusCode).toBe(HttpCode.DELETED));
 
   test(`Article count is 2 now`, async () => {
     const articleResponse = await request(app).get(`/articles`);
@@ -229,55 +245,63 @@ describe(`API correctly deletes an article`, () => {
   });
 });
 
-test(`API returns status code 404 when trying to change non-existent article`, () => {
-  const app = createAPI();
+describe(`UPDATE: API`, () => {
+  let app;
+  let validArticle;
 
-  const validArticle = {
-    title: `Котики`,
-    createDate: `10-10-2021`,
-    announce: `Супер кот`,
-    fullText: `Супер кот, который умеет верстать!`,
-    category: [`Животные`, `Игры`],
-  };
+  beforeAll(async () => {
+    app = await createAPI();
+    validArticle = {
+      title: `Котики`,
+      createdAt: `10-10-2021`,
+      announce: `Супер кот`,
+      fullText: `Супер кот, который умеет верстать!`,
+      category: [`Животные`, `Игры`],
+    };
+  });
 
-  return request(app)
-    .put(`/articles/NOEXST`)
-    .send(validArticle)
-    .expect(HttpCode.NOT_FOUND);
+  test(`API returns status code 404 when trying to change non-existent article`, () => {
+    return request(app)
+      .put(`/articles/NOEXST`)
+      .send(validArticle)
+      .expect(HttpCode.NOT_FOUND);
+  });
+
+  test(`API returns status code 400 when trying to change an article with invalid data`, async () => {
+
+    const invalidArticle = {...validArticle};
+
+    delete invalidArticle.title;
+
+    await request(app)
+      .put(`/articles/1`)
+      .send(invalidArticle)
+      .expect(HttpCode.BAD_REQUEST);
+  });
 });
 
-test(`API returns status code 400 when trying to change an article with invalid data`, () => {
-  const app = createAPI();
+describe(`API change comments`, () => {
+  let app;
 
-  const invalidArticle = {
-    category: `Это`,
-    title: `невалидный`,
-    description: `объект`,
-    picture: `объявления`,
-    type: `нет поля sum`
-  };
+  beforeAll(async () => {
+    app = await createAPI();
+  });
 
-  return request(app)
-    .put(`/articles/NOEXST`)
-    .send(invalidArticle)
-    .expect(HttpCode.BAD_REQUEST);
+  test(`API refuses to create a comment to non-existent article and returns status code 404`, () => {
+
+    return request(app)
+      .post(`/articles/NOEXST/comments`)
+      .send({
+        text: `Неважно`
+      })
+      .expect(HttpCode.NOT_FOUND);
+  });
+
+  test(`API refuses to delete non-existent comment`, () => {
+
+    return request(app)
+      .delete(`/articles/1/comments/NOEXST`)
+      .expect(HttpCode.NOT_FOUND);
+  });
 });
 
-test(`API refuses to create a comment to non-existent article and returns status code 404`, () => {
-  const app = createAPI();
-
-  return request(app)
-    .post(`/articles/NOEXST/comments`)
-    .send({
-      text: `Неважно`
-    })
-    .expect(HttpCode.NOT_FOUND);
-});
-
-test(`API refuses to delete non-existent comment`, () => {
-  const app = createAPI();
-
-  return request(app)
-    .delete(`/articles/Fg0ikD/comments/NOEXST`)
-    .expect(HttpCode.NOT_FOUND);
-});
