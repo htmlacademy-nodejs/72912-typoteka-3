@@ -8,6 +8,7 @@
     "jest": "jest",
     "start": "cross-env NODE_ENV=production LOG_LEVEL=error node ./src/service/service.js --server",
     "start::debug": "cross-env NODE_ENV=development LOG_LEVEL=debug node -r dotenv/config ./src/service/service.js --server",
+    "filldb": "cross-env NODE_ENV=development LOG_LEVEL=debug node -r dotenv/config ./src/service/service.js --filldb",
     "start-front-server": "nodemon ./src/express/express.js",
     "eslint": "eslint --ext .js src/"
   },
@@ -27,12 +28,14 @@
     "jest": "27.2.4",
     "nodemon": "2.0.12",
     "pino-pretty": "7.0.1",
+    "sqlite3": "5.0.2",
     "supertest": "6.1.6"
   },
   "dependencies": {
     "axios": "0.23.0",
     "chalk": "4.1.2",
     "cross-env": "7.0.3",
+    "dotenv": "10.0.0",
     "express": "4.17.1",
     "multer": "1.4.3",
     "nanoid": "3.1.28",

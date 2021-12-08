@@ -2,7 +2,7 @@
 
 const {HttpCode} = require(`../../constans`);
 
-const articleKeys = [`title`, `createDate`, `category`, `announce`];
+const articleKeys = [`title`, `fullText`, `categories`, `announce`];
 
 const articleValidator = (req, res, next) => {
   const newArticle = req.body;
