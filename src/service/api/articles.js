@@ -14,14 +14,20 @@ module.exports = (app, articleService, commentService) => {
   app.use(`/articles`, route);
 
   route.get(`/`, async (req, res) => {
-    const {comments} = req.query;
-    const articles = await articleService.findAll(comments);
+    const {offset, limit, comments} = req.query;
+    let result;
 
-    if (!articles) {
+    if (limit || offset) {
+      result = await articleService.findPage({limit, offset, comments});
+    } else {
+      result = await articleService.findAll(comments);
+    }
+
+    if (!result) {
       return res.status(HttpCode.NOT_FOUND).send(`Not found`);
     }
 
-    return res.status(HttpCode.OK).json(articles);
+    return res.status(HttpCode.OK).json(result);
   });
 
   route.get(`/:articleId`, async (req, res) => {
