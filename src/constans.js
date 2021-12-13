@@ -43,6 +43,8 @@ const Env = {
   PRODUCTION: `production`
 };
 
+const ARTICLES_PER_PAGE = 8;
+
 module.exports = {
   DEFAULT_COMMAND,
   DEFAULT_POSTS_VALUE,
@@ -59,6 +61,7 @@ module.exports = {
   MAX_ID_LENGTH,
   MAX_COMMENTS,
   API_PREFIX,
-  Env
+  Env,
+  ARTICLES_PER_PAGE
 };
 
