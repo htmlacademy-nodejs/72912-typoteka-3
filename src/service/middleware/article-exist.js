@@ -2,7 +2,7 @@
 
 const {HttpCode} = require(`../../constans`);
 
-const articleExist = (service) => async (req, res, next) => {
+module.exports = (service) => async (req, res, next) => {
   const {articleId} = req.params;
   const article = await service.findOne(articleId);
 
@@ -15,4 +15,3 @@ const articleExist = (service) => async (req, res, next) => {
   return next();
 };
 
-module.exports = articleExist;

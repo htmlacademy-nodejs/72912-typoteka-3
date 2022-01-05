@@ -7,8 +7,6 @@ const {ARTICLES_PER_PAGE} = require(`../../constans`);
 const mainRouter = new Router();
 const api = getAPI();
 
-
-
 mainRouter.get(`/`, async (req, res) => {
   let {page = 1} = req.query;
   page = +page;

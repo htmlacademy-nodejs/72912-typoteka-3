@@ -26,11 +26,10 @@ class CommentService {
     return !!deletedRows;
   }
 
-  create(articleId, {comment}) {
-
+  create(articleId, text) {
     return this._Comment.create({
       articleId,
-      ...comment
+      ...text
     });
   }
 }

@@ -38,12 +38,35 @@ const HttpCode = {
   BAD_REQUEST: 400,
 };
 
+const HttpMethod = {
+  GET: `GET`,
+  POST: `POST`,
+  PUT: `PUT`,
+  DELETE: `DELETE`
+};
+
 const Env = {
   DEVELOPMENT: `development`,
   PRODUCTION: `production`
 };
 
 const ARTICLES_PER_PAGE = 8;
+
+const CommentSchema = {
+  TEXT_ERROR: `Комментарий содержит меньше 20 символов`
+};
+
+const ArticleSchema = {
+  TITLE_MIN: `Заголовок содержит меньше 30 символов`,
+  TITLE_MAX: `Заголовок не может содержить больше 250 символов`,
+  PICTURE: `Изображение не выбрано или тип изображения не поддерживается`,
+  CATEGORIES: `Не выбрана ни одна категория публикации`,
+  ANNOUNCE_MIN: `Анонс публикации содержит меньше 30 символов`,
+  ANNOUNCE_MAX: `Анонс публикации не может содержать больше 250 символов`,
+  ANNOUNCE_NOT_EMPTY: `Анонс публикации не может быть пустым`,
+  FULL_TEXT: `Описание публикации не должно превышать 1000 символов`,
+  DATE: `Выбрана некорректная дата`
+};
 
 module.exports = {
   DEFAULT_COMMAND,
@@ -53,6 +76,7 @@ module.exports = {
   MAX_POSTS,
   ExitCode,
   HttpCode,
+  HttpMethod,
   PATH_OF_CATEGORIES,
   PATH_OF_SENTENCES,
   PATH_OF_TITLES,
@@ -62,6 +86,8 @@ module.exports = {
   MAX_COMMENTS,
   API_PREFIX,
   Env,
-  ARTICLES_PER_PAGE
+  ARTICLES_PER_PAGE,
+  CommentSchema,
+  ArticleSchema
 };
 

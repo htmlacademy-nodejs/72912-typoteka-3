@@ -33,6 +33,26 @@ mixin pagination(page, totalPages, width, prefix = '?')
             class=`${page === totalPages ? 'button--disabled' : ''}`
           ) Вперед
 
+style.
+  .server-error{
+    border-radius: 10px;
+    color: white;
+    background-color: tomato;
+    margin: 20px 0;
+    padding: 10px;
+    display: block;
+    width: 100%;
+  }
+
+mixin insertErrorMessage(messages)
+  if messages
+    each message of messages
+      .server-error= message.value
+mixin insertOneMessage(messages, type)
+  if messages
+    each message of messages
+      if message.type === type
+        .server-error= message.value
 doctype html
 head
   meta(charset='utf-8')

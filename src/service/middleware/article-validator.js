@@ -2,18 +2,24 @@
 
 const {HttpCode} = require(`../../constans`);
 
-const articleKeys = [`title`, `fullText`, `categories`, `announce`];
-
-const articleValidator = (req, res, next) => {
+module.exports = (schema) => async (req, res, next) => {
   const newArticle = req.body;
-  const keys = Object.keys(newArticle);
-  const keysExists = articleKeys.every((key) => keys.includes(key));
 
-  if (!keysExists) {
-    return res.status(HttpCode.BAD_REQUEST).send(`Bad request`);
+  try {
+    await schema.validateAsync(newArticle, {abortEarly: false});
+  } catch (e) {
+    const {details} = e;
+
+    const listErrors = details.map(({message, context}) => {
+      let error = {
+        type: context.label,
+        value: message
+      };
+      return error;
+    });
+
+    return res.status(HttpCode.BAD_REQUEST).send(listErrors);
   }
 
   return next();
 };
-
-module.exports = articleValidator;

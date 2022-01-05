@@ -14,6 +14,7 @@ block content
                   .new-publication__date-block
                     label(for='new-publication-date' aria-label='Календарь')
                     input#new-publication-date(type='text' name='date' value=articleData.createDate placeholder='2019-03-21')
+                    +insertOneMessage(validationMessage, 'date')
               button.new-publication__button.button.button--colored(type='submit') Опубликовать
             a.popup__button.button.button--popup-close(aria-label='Закрыть окно')
               | Закрыть
@@ -23,19 +24,25 @@ block content
                 .form__field
                   label
                     input(type='text' name='title' placeholder='Заголовок' value=articleData.title required='')
+                    +insertOneMessage(validationMessage, 'title')
                 .form__field.form__field--post-image
                   label
                     input#image-name-field(type='text' name='photo' placeholder='Фотография' value=articleData.picture readonly='')
+                    +insertOneMessage(validationMessage, 'picture')
                   .form__image-loader.form__image-loader--publication
                     label
                       input.visually-hidden(type='file' name='img')
                       | Обзор
                 .new-publication__category-wrapper
                   a.new-publication__form-link.button.button--transparent(href='/categories') Добавить категорию
+                  +insertOneMessage(validationMessage, 'categories')
               .form__wrapper.form__wrapper--text
                 .form__field.form__field--publication-text
                   label
                     textarea(rows='5' name='announce' placeholder='Анонс публикации') #{articleData.announce}
+                    +insertOneMessage(validationMessage, 'announce')
                 .form__field.form__field--publication-text
                   label
                     textarea(rows='10' name='fullText' placeholder='Полный текст публикации') #{articleData.fullText}
+                    +insertOneMessage(validationMessage, 'fullText')
+        +insertErrorMessage(validationMessage)
