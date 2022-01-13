@@ -2,15 +2,24 @@
 
 const {HttpCode} = require(`../../constans`);
 
+module.exports = (schema) => async (req, res, next) => {
 
-const commentValidator = (req, res, next) => {
-  const {comment} = req.body;
+  try {
+    await schema.validateAsync(req.body, {abortEarly: false});
+  } catch (e) {
+    const {details} = e;
 
-  if (!comment || comment.length === 0) {
-    return res.status(HttpCode.BAD_REQUEST).send(`Comment is empty`);
+    const listErrors = details.map(({message, context}) => {
+      let error = {
+        type: context.label,
+        value: message
+      };
+      return error;
+    });
+
+    return res.status(HttpCode.BAD_REQUEST).send(listErrors);
   }
 
   return next();
 };
 
-module.exports = commentValidator;

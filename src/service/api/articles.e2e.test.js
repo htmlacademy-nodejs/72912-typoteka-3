@@ -135,11 +135,11 @@ describe(`API creates an article if data is valid`, () => {
   beforeAll(async () => {
     app = await createAPI();
     newArticle = {
-      title: `Котики`,
+      title: `Котики Javascript любят все программисты мира`,
       categories: [1, 2],
-      announce: `Супер кот`,
-      fullText: `Javascript любят все программисты мира`,
-      userId: 9,
+      announce: `Супер кот Javascript любят все программисты мира`,
+      fullText: `Javascript любят все программисты мира Javascript любят все программисты мираJavascript любят все программисты мираJavascript любят все программисты мира`,
+      date: `2021-01-05 19:50:04`,
     };
 
     response = await request(app)
@@ -150,7 +150,7 @@ describe(`API creates an article if data is valid`, () => {
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.CREATED));
 
   test(`Returns article created`, () => expect(response.body).toEqual(expect.objectContaining({
-    announce: `Супер кот`,
+    announce: `Супер кот Javascript любят все программисты мира`,
   })));
 
   test(`Articles count is changed`, () => request(app)
@@ -188,15 +188,66 @@ describe(`API refuses to create an article if data is invalid`, () => {
 
     return null;
   });
+
+  test(`When field type is wrong response code is 400`, async () => {
+    const oldArticle = {
+      title: `Котики Javascript любят все программисты мира`,
+      categories: [1, 2],
+      announce: `Супер кот Javascript любят все программисты мира`,
+      fullText: `Javascript любят все программисты мира Javascript любят все программисты мираJavascript любят все программисты мираJavascript любят все программисты мира`,
+      date: `2021-01-05 19:50:04`,
+    };
+
+    const badArticles = [
+      {...oldArticle, title: `Короткий заголовок`},
+      {...oldArticle, categories: []},
+      {...oldArticle, announce: `Короткий анонс`},
+    ];
+
+    for (const badArticle of badArticles) {
+      return await request(app)
+        .post(`/articles`)
+        .send(badArticle)
+        .expect(HttpCode.BAD_REQUEST);
+    }
+
+    return null;
+  });
+
+  test(`When field value is wrong response code is 400`, async () => {
+    const oldArticle = {
+      title: `Котики Javascript любят все программисты мира`,
+      categories: [1, 2],
+      announce: `Супер кот Javascript любят все программисты мира`,
+      fullText: `Javascript любят все программисты мира Javascript любят все программисты мираJavascript любят все программисты мираJavascript любят все программисты мира`,
+      date: `2021-01-05 19:50:04`,
+    };
+
+    const badArticles = [
+      {...oldArticle, title: -1},
+      {...oldArticle, categories: {}},
+      {...oldArticle, date: `text`},
+    ];
+
+    for (const badArticle of badArticles) {
+      return await request(app)
+        .post(`/articles`)
+        .send(badArticle)
+        .expect(HttpCode.BAD_REQUEST);
+    }
+
+    return null;
+  });
+
 });
 
 describe(`API changes existent article`, () => {
   const newArticle = {
-    title: `КотМики`,
-    createDate: `10-10-2021`,
-    announce: `Супер кот`,
-    fullText: `Супер кот, который умеет верстать!`,
-    categories: [`Животные`, `Игры`],
+    title: `Котики Javascript любят все программисты мира`,
+    categories: [1, 2],
+    announce: `Супер кот Javascript любят все программисты мира`,
+    fullText: `Javascript любят все программисты мира Javascript любят все программисты мираJavascript любят все программисты мираJavascript любят все программисты мира`,
+    date: `2021-01-05 19:50:04`,
   };
 
   let app;
@@ -215,7 +266,7 @@ describe(`API changes existent article`, () => {
 
   test(`Article is really changed`, () => request(app)
     .get(`/articles/1`)
-    .expect((res) => expect(res.body.title).toBe(`КотМики`))
+    .expect((res) => expect(res.body.title).toBe(`Котики Javascript любят все программисты мира`))
   );
 
 });

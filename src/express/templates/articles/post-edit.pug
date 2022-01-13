@@ -5,7 +5,7 @@ block content
     section
       .popup.popup--new-publication.popup--anti
         .new-publication
-          form(action='#' method='POST')
+          form(action='/articles/edit/' + article.id method='POST' enctype='multipart/form-data')
             div(class='new-publication__header')
               h1 Новая публикация
               div(class='new-publication__date-form')
@@ -14,6 +14,7 @@ block content
                   div(class='new-publication__date-block')
                     label(for='new-publication-date' aria-label='Календарь')
                     input#new-publication-date(type='text' name='date' placeholder='2019-03-21' value=article.createdAt)
+                    +insertOneMessage(validationMessage, 'date')
               button(type='submit' class='new-publication__button button button--colored') Опубликовать
             a(class='popup__button button button--popup-close' aria-label='Закрыть окно')
               | Закрыть
@@ -23,9 +24,11 @@ block content
                 div(class='form__field')
                   label
                     input(type='text' name='title' placeholder='Заголовок' value=article.title required='')
+                    +insertOneMessage(validationMessage, 'title')
                 div(class='form__field form__field--post-image')
                   label
-                    input#image-name-field(type='text' name='photo' value=article.picture placeholder='Фотография' readonly='')
+                    input#image-name-field(type='text' name='img' value=article.picture placeholder='Фотография' readonly='')
+                    +insertOneMessage(validationMessage, 'picture')
                   div(class='form__image-loader form__image-loader--publication')
                     label
                       input.visually-hidden(type='file' name='upload')
@@ -37,10 +40,14 @@ block content
                       input(id=`checkbox-auto-${index}` type='checkbox' name='category')
                       label(for=`checkbox-auto-${index}`) #{category.name}
                   a(class='new-publication__form-link button button--transparent' href='#') Добавить категорию
+                  +insertOneMessage(validationMessage, 'categories')
               div(class='form__wrapper form__wrapper--text')
                 div(class='form__field form__field--publication-text')
                   label
-                    textarea(rows='5' name='announcement' placeholder='Анонс публикации') #{article.announce}
+                    textarea(rows='5' name='announce' placeholder='Анонс публикации') #{article.announce}
+                    +insertOneMessage(validationMessage, 'announce')
                 div(class='form__field form__field--publication-text')
                   label
-                    textarea(rows='10' name='full-text' placeholder='Полный текст публикации') #{article.fullText}
+                    textarea(rows='10' name='fullText' placeholder='Полный текст публикации') #{article.fullText}
+                    +insertOneMessage(validationMessage, 'fullText')
+              +insertErrorMessage(validationMessage)
