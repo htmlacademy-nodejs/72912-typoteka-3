@@ -53,7 +53,8 @@ const Env = {
 const ARTICLES_PER_PAGE = 8;
 
 const CommentSchema = {
-  TEXT_ERROR: `Комментарий содержит меньше 20 символов`
+  TEXT_ERROR: `Комментарий содержит меньше 20 символов`,
+  USER_ID: `Пользователя с таким ID не существует`
 };
 
 const ArticleSchema = {
@@ -65,7 +66,19 @@ const ArticleSchema = {
   ANNOUNCE_MAX: `Анонс публикации не может содержать больше 250 символов`,
   ANNOUNCE_NOT_EMPTY: `Анонс публикации не может быть пустым`,
   FULL_TEXT: `Описание публикации не должно превышать 1000 символов`,
-  DATE: `Выбрана некорректная дата`
+  DATE: `Выбрана некорректная дата`,
+  USER_ID: `Пользователя с таким ID не существует`
+};
+
+const UserSchema = {
+  NAME: `Имя содержит некорректные символы`,
+  SURNAME: `Фамилия содержит некорректные символы`,
+  EMAIL: `Некорректный электронный адрес`,
+  EMAIL_EXISTS: `Электронный адрес уже используется`,
+  PASSWORD_MIN: `Пароль содержит меньше 6-ти символов`,
+  PASSWORD_REPEAT: `Пароли не совпадают`,
+  AVATAR: `Изображение не выбрано или тип изображения не поддерживается`,
+  REQUIRED_FIELD: `Поле обязательно для заполнения`
 };
 
 module.exports = {
@@ -88,6 +101,7 @@ module.exports = {
   Env,
   ARTICLES_PER_PAGE,
   CommentSchema,
-  ArticleSchema
+  ArticleSchema,
+  UserSchema
 };
 

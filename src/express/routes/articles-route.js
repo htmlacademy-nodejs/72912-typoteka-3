@@ -105,6 +105,7 @@ articlesRouter.get(`/:id`, async (req, res) => {
 
   try {
     const article = await api.getArticle(id, true);
+    console.log(article);
     res.render(`articles/post-detail`, {article});
   } catch (e) {
     res.render(`errors/404`);

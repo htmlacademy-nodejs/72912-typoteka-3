@@ -22,6 +22,9 @@ const logger = getLogger({name: `api`});
 const sequelize = require(`../lib/sequelize`);
 const initDatabase = require(`../lib/init-db`);
 
+const passwordUtils = require(`../lib/password`);
+
+
 const asyncReadFile = async (filePath) => {
   try {
     const content = await fs.readFile(filePath, `utf-8`);
@@ -32,7 +35,7 @@ const asyncReadFile = async (filePath) => {
   }
 };
 
-const generatePosts = (count, titles, sentences, categories, comments) => {
+const generatePosts = (count, titles, sentences, categories, comments, users) => {
   return Array(count)
     .fill({})
     .map(() => ({
@@ -40,15 +43,17 @@ const generatePosts = (count, titles, sentences, categories, comments) => {
       announce: shuffle(sentences).slice(1, 5).join(` `),
       fullText: shuffle(sentences).slice(1, getRandomInt(1, sentences.length - 1)).join(` `),
       categories: getRandomSubarray(categories),
-      comments: generateComments(getRandomInt(1, MAX_COMMENTS), comments),
+      comments: generateComments(getRandomInt(1, MAX_COMMENTS), comments, users),
+      user: users[getRandomInt(0, users.length - 1)].email
     }));
 };
 
-const generateComments = (count, comments) => (
+const generateComments = (count, comments, users) => (
   Array(count).fill({}).map(() => ({
     text: shuffle(comments)
       .slice(0, getRandomInt(1, 3))
-      .join(` `)
+      .join(` `),
+    user: users[getRandomInt(0, users.length - 1)].email
   }))
 );
 
@@ -94,8 +99,25 @@ module.exports = {
     const categories = await asyncReadFile(PATH_OF_CATEGORIES);
     const comments = await asyncReadFile(PATH_OF_COMMENTS);
 
-    const articles = generatePosts(countPosts, titles, sentences, categories, comments);
+    const users = [
+      {
+        email: `ivanov@example.com`,
+        passwordHash: await passwordUtils.hash(`qwert1234`),
+        name: `Иван`,
+        surname: `Иванов`,
+        avatar: `avatar1.jpg`,
+        role: `isAdmin`
+      }, {
+        email: `petrov@example.com`,
+        passwordHash: await passwordUtils.hash(`artbook99`),
+        name: `Пётр`,
+        surname: `Петров`,
+        avatar: `avatar2.jpg`
+      }
+    ];
 
-    return initDatabase(sequelize, {categories, articles});
+    const articles = generatePosts(countPosts, titles, sentences, categories, comments, users);
+
+    return initDatabase(sequelize, {articles, categories, users});
   }
 };

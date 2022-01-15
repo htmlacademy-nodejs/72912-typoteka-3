@@ -2,6 +2,7 @@
 
 const {Router} = require(`express`);
 const {getAPI} = require(`../api`);
+const pictureUpload = require(`../middleware/picture-upload`);
 const {ARTICLES_PER_PAGE} = require(`../../constans`);
 
 const mainRouter = new Router();
@@ -40,5 +41,27 @@ mainRouter.get(`/search`, async (req, res) => {
 });
 
 mainRouter.get(`/categories`, (req, res) => res.render(`all-categories`));
+
+mainRouter.post(`/register`, pictureUpload.single(`img`), async (req, res) => {
+  const {body, file} = req;
+  console.log(body);
+  const userData = {
+    avatar: file ? file.filename : ``,
+    name: body[`name`],
+    surname: body[`surname`],
+    email: body[`email`],
+    password: body[`password`],
+    passwordRepeated: body[`password-repeated`]
+  };
+
+  try {
+    await api.createUser(userData);
+    res.redirect(`/login`);
+  } catch (e) {
+    console.log(e.response.data);
+    const validationMessage = e.response.data;
+    res.render(`sign-up`, {userData, validationMessage});
+  }
+});
 
 module.exports = mainRouter;

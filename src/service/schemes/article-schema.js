@@ -26,5 +26,8 @@ module.exports = Joi.object({
   }),
   date: Joi.date().required().messages({
     'string.any': ArticleSchema.DATE
+  }),
+  userId: Joi.number().integer().positive().required().messages({
+    'number.base': ArticleSchema.USER_ID
   })
 });
