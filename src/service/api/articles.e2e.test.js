@@ -21,16 +21,20 @@ const mockArticles = [
     "categories": [`Журналы`],
     "comments": [
       {
-        "text": `Неплохо, но дорого. Совсем немного... Оплата наличными или перевод на карту?`
+        "text": `Неплохо, но дорого. Совсем немного... Оплата наличными или перевод на карту?`,
+        "user": `petrov@example.com`
       },
       {
-        "text": `С чем связана продажа? Почему так дешёво? Вы что?! В магазине дешевле. Продаю в связи с переездом. Отрываю от сердца.`
+        "text": `С чем связана продажа? Почему так дешёво? Вы что?! В магазине дешевле. Продаю в связи с переездом. Отрываю от сердца.`,
+        "user": `myemail@test.com`
       },
       {
-        "text": `Неплохо, но дорого. Совсем немного...`
+        "text": `Неплохо, но дорого. Совсем немного...`,
+        "user": `petrov@example.com`
       },
       {
-        "text": `Вы что?! В магазине дешевле.`
+        "text": `Вы что?! В магазине дешевле.`,
+        "user": `myemail@test.com`
       }
     ],
   },
@@ -42,16 +46,20 @@ const mockArticles = [
     "categories": [`Игры`],
     "comments": [
       {
-        "text": `Неплохо, но дорого. Совсем немного... Оплата наличными или перевод на карту?`
+        "text": `Неплохо, но дорого. Совсем немного... Оплата наличными или перевод на карту?`,
+        "user": `petrov@example.com`
       },
       {
-        "text": `С чем связана продажа? Почему так дешёво? Вы что?! В магазине дешевле. Продаю в связи с переездом. Отрываю от сердца.`
+        "text": `С чем связана продажа? Почему так дешёво? Вы что?! В магазине дешевле. Продаю в связи с переездом. Отрываю от сердца.`,
+        "user": `myemail@test.com`
       },
       {
-        "text": `Неплохо, но дорого. Совсем немного...`
+        "text": `Неплохо, но дорого. Совсем немного...`,
+        "user": `petrov@example.com`
       },
       {
-        "text": `Вы что?! В магазине дешевле.`
+        "text": `Вы что?! В магазине дешевле.`,
+        "user": `myemail@test.com`
       }
     ],
   },
@@ -63,18 +71,38 @@ const mockArticles = [
     "categories": [`Животные`],
     "comments": [
       {
-        "text": `Неплохо, но дорого. Совсем немного... Оплата наличными или перевод на карту?`
+        "text": `Неплохо, но дорого. Совсем немного... Оплата наличными или перевод на карту?`,
+        "user": `petrov@example.com`
       },
       {
-        "text": `С чем связана продажа? Почему так дешёво? Вы что?! В магазине дешевле. Продаю в связи с переездом. Отрываю от сердца.`
+        "text": `С чем связана продажа? Почему так дешёво? Вы что?! В магазине дешевле. Продаю в связи с переездом. Отрываю от сердца.`,
+        "user": `myemail@test.com`
       },
       {
-        "text": `Неплохо, но дорого. Совсем немного...`
+        "text": `Неплохо, но дорого. Совсем немного...`,
+        "user": `petrov@example.com`
       },
       {
-        "text": `Вы что?! В магазине дешевле.`
+        "text": `Вы что?! В магазине дешевле.`,
+        "user": `myemail@test.com`
       }
     ],
+  }
+];
+
+const mockUsers = [
+  {
+    email: `ivanov@example.com`,
+    passwordHash: `qwert1234`,
+    name: `Иван`,
+    surname: `Иванов`,
+    avatar: `avatar1.jpg`
+  }, {
+    email: `petrov@example.com`,
+    passwordHash: `artbook99`,
+    name: `Пётр`,
+    surname: `Петров`,
+    avatar: `avatar2.jpg`
   }
 ];
 
@@ -84,9 +112,10 @@ const mockCategories = [
   `Животные`
 ];
 
+
 const createAPI = async () => {
   const mockDB = new Sequelize(`sqlite::memory`, {logging: false});
-  await initDB(mockDB, {categories: mockCategories, articles: mockArticles});
+  await initDB(mockDB, {categories: mockCategories, articles: mockArticles, users: mockUsers});
 
   const app = express();
   app.use(express.json());
@@ -109,7 +138,7 @@ describe(`API returns a list of all articles`, () => {
 
   test(`Returns a list of 3 articles`, () => expect(response.body.length).toBe(3));
 
-  test(`First article's id equals 16`, () => expect(response.body[0].id).toBe(1));
+  test(`First article's id equals 1`, () => expect(response.body[0].id).toBe(1));
 
 });
 
@@ -140,6 +169,7 @@ describe(`API creates an article if data is valid`, () => {
       announce: `Супер кот Javascript любят все программисты мира`,
       fullText: `Javascript любят все программисты мира Javascript любят все программисты мираJavascript любят все программисты мираJavascript любят все программисты мира`,
       date: `2021-01-05 19:50:04`,
+      userId: 1
     };
 
     response = await request(app)
@@ -248,6 +278,7 @@ describe(`API changes existent article`, () => {
     announce: `Супер кот Javascript любят все программисты мира`,
     fullText: `Javascript любят все программисты мира Javascript любят все программисты мираJavascript любят все программисты мираJavascript любят все программисты мира`,
     date: `2021-01-05 19:50:04`,
+    userId: 1
   };
 
   let app;
@@ -308,6 +339,7 @@ describe(`UPDATE: API`, () => {
       announce: `Супер кот`,
       fullText: `Супер кот, который умеет верстать!`,
       category: [`Животные`, `Игры`],
+      userId: 1
     };
   });
 
