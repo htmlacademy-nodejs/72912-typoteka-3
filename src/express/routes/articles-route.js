@@ -3,27 +3,24 @@ const express = require(`express`);
 const {Router} = require(`express`);
 const {getAPI} = require(`../api`);
 const pictureUpload = require(`../middleware/picture-upload`);
+const auth = require(`../middleware/auth`);
 const {HttpCode} = require(`../../constans`);
+const csrf = require(`csurf`);
+const csrfProtection = csrf();
 
 const articlesRouter = new Router();
 const api = getAPI();
 
-const getEditArticleData = async (articleId) => {
-  const [article, categories] = await Promise.all([
-    api.getArticle(articleId),
-    api.getCategories()
-  ]);
-  return [article, categories];
-};
-
 articlesRouter.use(express.urlencoded({extended: true}));
 
-articlesRouter.get(`/add`, (req, res) => {
-  res.render(`articles/post-new`, {articleData: {}});
+articlesRouter.get(`/add`, [auth, csrfProtection], (req, res) => {
+  const {user} = req.session;
+  res.render(`articles/post-new`, {articleData: {}, user, csrfToken: req.csrfToken()});
 });
 
-articlesRouter.post(`/add`, pictureUpload.single(`img`), async (req, res) => {
+articlesRouter.post(`/add`, [auth, pictureUpload.single(`img`), csrfProtection], async (req, res) => {
   const {body, file} = req;
+  const {user} = req.session;
 
   const articleData = {
     title: body.title,
@@ -35,17 +32,18 @@ articlesRouter.post(`/add`, pictureUpload.single(`img`), async (req, res) => {
   };
 
   try {
-    await api.createArticle(articleData);
+    await api.createArticle({...articleData, userId: user.id});
     res.redirect(`/my`);
   } catch (e) {
     const validationMessage = e.response.data;
-    res.render(`articles/post-new`, {articleData, validationMessage});
+    res.render(`articles/post-new`, {articleData, validationMessage, csrfToken: req.csrfToken()});
   }
 });
 
-articlesRouter.post(`/edit/:id`, pictureUpload.single(`upload`), async (req, res) => {
+articlesRouter.post(`/edit/:id`, [auth, pictureUpload.single(`upload`), csrfProtection], async (req, res) => {
   const {body, file} = req;
   const {id} = req.params;
+  const {user} = req.session;
 
   const article = {
     title: body.title,
@@ -57,58 +55,58 @@ articlesRouter.post(`/edit/:id`, pictureUpload.single(`upload`), async (req, res
   };
 
   try {
-    await api.editArticle(id, article);
+    await api.editArticle(id, {...article, userId: user.id});
     res.redirect(`/my`);
   } catch (e) {
     const validationMessage = e.response.data;
-    const [oldArticle] = await getEditArticleData(id);
-    res.render(`/articles/post-edit`, {id, oldArticle, validationMessage});
+    res.render(`articles/post-edit`, {id, article, validationMessage, user, csrfToken: req.csrfToken()});
   }
 });
 
-articlesRouter.post(`/:id`, async (req, res) => {
+articlesRouter.post(`/:id`, [auth, csrfProtection], async (req, res) => {
 
   const {message} = req.body;
   const {id} = req.params;
+  const {user} = req.session;
 
   try {
-    await api.createComment(id, {text: message});
+    await api.createComment(id, {userId: user.id, text: message});
     res.redirect(`/articles/${id}`);
   } catch (e) {
     const validationMessage = e.response.data;
     const article = await api.getArticle(id, true);
-    res.render(`articles/post-detail`, {id, article, validationMessage});
+    res.render(`articles/post-detail`, {id, article, user, validationMessage, csrfToken: req.csrfToken()});
   }
 
 });
 
-articlesRouter.get(`/edit/:id`, async (req, res) => {
+articlesRouter.get(`/edit/:id`, [auth, csrfProtection], async (req, res) => {
   const {id} = req.params;
-
+  const {user} = req.session;
   try {
     const article = await api.getArticle(id);
-    res.render(`articles/post-edit`, {article});
+    res.render(`articles/post-edit`, {id, article, user, csrfToken: req.csrfToken()});
   } catch (e) {
-    res.status(HttpCode.NOT_FOUND).render(`errors/404`);
+    res.status(HttpCode.NOT_FOUND).render(`errors/404`, {user});
   }
 
 });
 
 articlesRouter.get(`/category/:id`, async (req, res) => {
   const {id} = req.params;
+  const {user} = req.session;
   const {categories} = await api.getArticle(id, true);
-  res.render(`articles/articles-by-category`, {categories});
+  res.render(`articles/articles-by-category`, {categories, user});
 });
 
-articlesRouter.get(`/:id`, async (req, res) => {
+articlesRouter.get(`/:id`, csrfProtection, async (req, res) => {
   const {id} = req.params;
-
+  const {user} = req.session;
   try {
     const article = await api.getArticle(id, true);
-    console.log(article);
-    res.render(`articles/post-detail`, {article});
+    res.render(`articles/post-detail`, {article, user, csrfToken: req.csrfToken()});
   } catch (e) {
-    res.render(`errors/404`);
+    res.render(`errors/404`, {user});
   }
 
 });

@@ -10,6 +10,8 @@ const user = require(`./user`);
 
 const UserService = require(`../data-service/user`);
 const {HttpCode} = require(`../../constans`);
+const passwordUtils = require(`../lib/password`);
+
 
 const mockArticles = [
   {
@@ -92,10 +94,11 @@ const mockArticles = [
 const mockUsers = [
   {
     email: `ivanov@example.com`,
-    passwordHash: `qwert1234`,
+    passwordHash: passwordUtils.hashSync(`qwert1234`),
     name: `Иван`,
     surname: `Иванов`,
-    avatar: `avatar1.jpg`
+    avatar: `avatar1.jpg`,
+    role: `isAdmin`
   }, {
     email: `petrov@example.com`,
     passwordHash: `artbook99`,
@@ -211,5 +214,58 @@ describe(`API refuses to create user if data is invalid`, () => {
       .post(`/user`)
       .send(badUserData)
       .expect(HttpCode.BAD_REQUEST);
+  });
+});
+
+
+describe(`API authenticate user if data is valid`, () => {
+  const validAuthData = {
+    email: `ivanov@example.com`,
+    password: `qwert1234`
+  };
+  let app;
+  let response;
+
+  beforeAll(async () => {
+    app = await createAPI();
+    response = await request(app)
+      .post(`/user/auth`)
+      .send(validAuthData);
+  });
+
+  test(`Status code is 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
+  test(`User name is Иван Иванов`, () => expect(response.body.name).toBe(`Иван`));
+});
+
+
+describe(`API refuses to authenticate user if data is invalid`, () => {
+  let app;
+
+  beforeAll(async () => {
+    app = await createAPI();
+  });
+
+  test(`If email is incorrect is 401`, async () => {
+    const invalidData = {
+      email: `not-exists@example.com`,
+      password: `123456`
+    };
+
+    await request(app)
+      .post(`/user/auth`)
+      .send(invalidData)
+      .expect(HttpCode.UNAUTHORIZED);
+  });
+
+  test(`If password doesn't match status is 401`, async () => {
+    const invalidData = {
+      email: `ivanov@example.com`,
+      password: `123456`
+    };
+
+    await request(app)
+      .post(`/user/auth`)
+      .send(invalidData)
+      .expect(HttpCode.UNAUTHORIZED);
   });
 });

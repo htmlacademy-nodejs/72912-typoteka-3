@@ -36,17 +36,19 @@ block content
                     img(src=comment.avatar)
                   .comments__text
                     .comments__head
-                      p Евгений Петров •
+                      p #{comment.users.name} #{comment.users.surname} •
                       time.comments__date(datetime='2019-03-21T20:33') #{comment.createdAt}
                     p.comments__message #{comment.text}
           else
             h2.comments__title.title.title--middle Комментарии отсутствуют
-          .comments__footer.comments__footer--user
-            form(action='/articles/' + article.id method='POST')
-              .comments__avatar.avatar
-                img(src='/img/avatar-2.png' alt='аватар пользователя')
-              label
-                textarea(rows='1' name='message' placeholder='Присоединиться к обсуждению')
-                +insertOneMessage(validationMessage, 'message')
-              button.comments__button.button.button--colored(type='submit') Опубликовать
-          +insertErrorMessage(validationMessage)
+          if user
+            .comments__footer.comments__footer--user
+              form(action='/articles/' + article.id method='POST')
+                input(type='hidden' name="_csrf" value=csrfToken)
+                .comments__avatar.avatar
+                  img(src=user.avatar alt='аватар пользователя')
+                label
+                  textarea(rows='1' name='message' placeholder='Присоединиться к обсуждению')
+                  +insertOneMessage(validationMessage, 'message')
+                button.comments__button.button.button--colored(type='submit') Опубликовать
+            +insertErrorMessage(validationMessage)

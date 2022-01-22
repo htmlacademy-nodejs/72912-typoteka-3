@@ -112,7 +112,8 @@ module.exports = {
         passwordHash: await passwordUtils.hash(`artbook99`),
         name: `Пётр`,
         surname: `Петров`,
-        avatar: `avatar2.jpg`
+        avatar: `avatar2.jpg`,
+        role: `isUser`
       }
     ];
 
