@@ -24,7 +24,10 @@ header(class={header: true, "header--logged": user})
           li(class="header__list-item")
             a(class="header__exit", href="/logout") Выйти
       a(class="header__avatar avatar")
-        img(src=user.avatar, alt="аватар пользователя")
+        if user.avatar
+          img(src=`/img/${user.avatar}`, alt=user.name)
+        else
+          img()
   else
     nav.header__nav
       ul.header__nav-list

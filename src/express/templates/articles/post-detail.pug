@@ -33,7 +33,10 @@ block content
               each comment in article.comments
                 li.comments__comment
                   .comments__avatar.avatar
-                    img(src=comment.avatar)
+                    if comment.users.avatar
+                      img(src=`/img/${comment.users.avatar}`, alt=comment.users.name)
+                    else
+                      img()
                   .comments__text
                     .comments__head
                       p #{comment.users.name} #{comment.users.surname} •
@@ -46,7 +49,10 @@ block content
               form(action='/articles/' + article.id method='POST')
                 input(type='hidden' name="_csrf" value=csrfToken)
                 .comments__avatar.avatar
-                  img(src=user.avatar alt='аватар пользователя')
+                  if user.avatar
+                    img(src=`/img/${user.avatar}`, alt=user.name)
+                  else
+                    img()
                 label
                   textarea(rows='1' name='message' placeholder='Присоединиться к обсуждению')
                   +insertOneMessage(validationMessage, 'message')

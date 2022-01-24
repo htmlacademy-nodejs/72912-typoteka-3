@@ -80,7 +80,7 @@ class ArticleService {
           include: [{
             model: this._User,
             as: Aliase.USERS,
-            attributes: [`name`, `surname`]
+            attributes: [`name`, `surname`, `avatar`]
           }]
         }
       ]
