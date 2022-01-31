@@ -8,7 +8,7 @@ module.exports = (service) => async (req, res, next) => {
     if (userByEmail) {
       return res.status(HttpCode.BAD_REQUEST).send([{value: UserSchema.EMAIL_EXISTS}]);
     }
-  } catch(e) {
+  } catch (e) {
     return e.details;
   }
 

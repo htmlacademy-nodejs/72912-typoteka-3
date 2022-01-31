@@ -9,9 +9,9 @@ class UserService {
     const existAdmin = await this._User.findByPk(1);
     let user;
     if (existAdmin) {
-      user = await this._User.create({...userData, role: 'isUser'});
+      user = await this._User.create({...userData, role: `isUser`});
     } else {
-      user = await this._User.create({...userData, role: 'isAdmin'});
+      user = await this._User.create({...userData, role: `isAdmin`});
     }
 
     return user.get();

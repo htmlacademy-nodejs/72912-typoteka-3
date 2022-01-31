@@ -67,7 +67,7 @@ mainRouter.post(`/register`, pictureUpload.single(`img`), async (req, res) => {
 mainRouter.post(`/login`, async (req, res) => {
   try {
     const user = await api.auth(req.body[`user-email`], req.body[`user-password`]);
-    console.log(user);
+
     req.session.user = user;
     req.session.save(() => {
       res.redirect(`/`);

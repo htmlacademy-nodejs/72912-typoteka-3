@@ -4,6 +4,7 @@ const {Router} = require(`express`);
 const {getAPI} = require(`../api`);
 const pictureUpload = require(`../middleware/picture-upload`);
 const auth = require(`../middleware/auth`);
+const privateRoute = require(`../middleware/private-route`);
 const {HttpCode} = require(`../../constans`);
 const csrf = require(`csurf`);
 const csrfProtection = csrf();
@@ -13,12 +14,12 @@ const api = getAPI();
 
 articlesRouter.use(express.urlencoded({extended: true}));
 
-articlesRouter.get(`/add`, [auth, csrfProtection], (req, res) => {
+articlesRouter.get(`/add`, [auth, privateRoute, csrfProtection], (req, res) => {
   const {user} = req.session;
   res.render(`articles/post-new`, {articleData: {}, user, csrfToken: req.csrfToken()});
 });
 
-articlesRouter.post(`/add`, [auth, pictureUpload.single(`img`), csrfProtection], async (req, res) => {
+articlesRouter.post(`/add`, [auth, privateRoute, pictureUpload.single(`img`), csrfProtection], async (req, res) => {
   const {body, file} = req;
   const {user} = req.session;
 
@@ -40,7 +41,7 @@ articlesRouter.post(`/add`, [auth, pictureUpload.single(`img`), csrfProtection],
   }
 });
 
-articlesRouter.post(`/edit/:id`, [auth, pictureUpload.single(`upload`), csrfProtection], async (req, res) => {
+articlesRouter.post(`/edit/:id`, [auth, privateRoute, pictureUpload.single(`upload`), csrfProtection], async (req, res) => {
   const {body, file} = req;
   const {id} = req.params;
   const {user} = req.session;
@@ -80,7 +81,7 @@ articlesRouter.post(`/:id`, [auth, csrfProtection], async (req, res) => {
 
 });
 
-articlesRouter.get(`/edit/:id`, [auth, csrfProtection], async (req, res) => {
+articlesRouter.get(`/edit/:id`, [auth, privateRoute, csrfProtection], async (req, res) => {
   const {id} = req.params;
   const {user} = req.session;
   try {
