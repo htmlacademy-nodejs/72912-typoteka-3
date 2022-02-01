@@ -9,9 +9,9 @@ const mainRouter = new Router();
 const api = getAPI();
 
 mainRouter.get(`/`, async (req, res) => {
+  const {user} = req.session;
   let {page = 1} = req.query;
   page = +page;
-
   const limit = ARTICLES_PER_PAGE;
 
   const offset = (page - 1) * ARTICLES_PER_PAGE;
@@ -23,7 +23,7 @@ mainRouter.get(`/`, async (req, res) => {
 
   const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
 
-  res.render(`main`, {articles, categories, totalPages, page});
+  res.render(`main`, {articles, categories, totalPages, page, user});
 });
 
 mainRouter.get(`/register`, (req, res) => res.render(`sign-up`));
@@ -44,7 +44,7 @@ mainRouter.get(`/categories`, (req, res) => res.render(`all-categories`));
 
 mainRouter.post(`/register`, pictureUpload.single(`img`), async (req, res) => {
   const {body, file} = req;
-  console.log(body);
+
   const userData = {
     avatar: file ? file.filename : ``,
     name: body[`name`],
@@ -58,10 +58,29 @@ mainRouter.post(`/register`, pictureUpload.single(`img`), async (req, res) => {
     await api.createUser(userData);
     res.redirect(`/login`);
   } catch (e) {
-    console.log(e.response.data);
-    const validationMessage = e.response.data;
+    console.log(`Main route ${e}`);
+    const validationMessage = e.message.data;
     res.render(`sign-up`, {userData, validationMessage});
   }
+});
+
+mainRouter.post(`/login`, async (req, res) => {
+  try {
+    const user = await api.auth(req.body[`user-email`], req.body[`user-password`]);
+
+    req.session.user = user;
+    req.session.save(() => {
+      res.redirect(`/`);
+    });
+  } catch (e) {
+    const validationMessage = e.response.data;
+    res.render(`login`, {validationMessage});
+  }
+});
+
+mainRouter.get(`/logout`, (req, res) => {
+  delete req.session.user;
+  res.redirect(`/login`);
 });
 
 module.exports = mainRouter;

@@ -81,6 +81,11 @@ const UserSchema = {
   REQUIRED_FIELD: `Поле обязательно для заполнения`
 };
 
+const ErrorAuthMessage = {
+  EMAIL: `Некорретный электронный адрес`,
+  PASSWORD: `Неверный пароль`
+};
+
 module.exports = {
   DEFAULT_COMMAND,
   DEFAULT_POSTS_VALUE,
@@ -102,6 +107,7 @@ module.exports = {
   ARTICLES_PER_PAGE,
   CommentSchema,
   ArticleSchema,
-  UserSchema
+  UserSchema,
+  ErrorAuthMessage
 };
 

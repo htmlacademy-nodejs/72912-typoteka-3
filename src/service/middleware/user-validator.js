@@ -7,9 +7,9 @@ module.exports = (schema) => async (req, res, next) => {
 
   try {
     await schema.validateAsync(newUser, {abortEarly: false});
-
   } catch (e) {
     const {details} = e;
+
     const listErrors = details.map(({message, context}) => {
       let error = {
         type: context.label,

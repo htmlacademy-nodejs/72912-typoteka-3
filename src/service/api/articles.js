@@ -34,7 +34,7 @@ module.exports = (app, articleService, commentService) => {
     return res.status(HttpCode.OK).json(result);
   });
 
-  route.get(`/:articleId`, routeValidator(RouteSchema), async (req, res) => {
+  route.get(`/:articleId`, [routeValidator(RouteSchema), articleExist(articleService)], async (req, res) => {
     const {articleId} = req.params;
 
     try {

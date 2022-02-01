@@ -72,7 +72,20 @@ class ArticleService {
   }
 
   findOne(id) {
-    return this._Article.findByPk(id, {include: [Aliase.CATEGORIES, Aliase.COMMENTS]});
+    return this._Article.findByPk(id, {include:
+      [Aliase.CATEGORIES,
+        {
+          model: this._Comment,
+          as: Aliase.COMMENTS,
+          include: [{
+            model: this._User,
+            as: Aliase.USERS,
+            attributes: [`name`, `surname`, `avatar`]
+          }]
+        }
+      ]
+    }
+    );
   }
 
   async update(id, article) {
