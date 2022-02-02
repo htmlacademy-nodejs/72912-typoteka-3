@@ -3,7 +3,7 @@
 module.exports = (req, res, next) => {
   const {user} = req.session;
 
-  if (user.role !== `isAdmin`) {
+  if (!user || user.role !== `admin`) {
     return res.redirect(`/`);
   }
 

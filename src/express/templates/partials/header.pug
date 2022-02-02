@@ -3,7 +3,7 @@ header(class={header: true, "header--logged": user})
     img.logo__image(src='/img/icons/logo-image-only.svg' alt='логотип Тайпотеки')
     span.logo__name Типотека
   if user
-    if user.role === 'isAdmin'
+    if user.role === 'admin'
       button(class="button button--colored header__button-new") Новая запись
       div(class="header__dropdown")
         a(href="#", class="button button--burger header__burger") Открыть меню
@@ -16,7 +16,7 @@ header(class={header: true, "header--logged": user})
             a(href="main.html") Пункт меню
           li(class="navigation__item")
             a(href="main.html") Пункт меню
-    else if user.role === 'isUser'
+    else if user.role === 'user'
       nav(class="header__nav")
         ul(class="header__nav-list")
           li(class="header__list-item")
