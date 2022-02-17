@@ -7,7 +7,7 @@ const SequelizeStore = require(`connect-session-sequelize`)(session.Store);
 
 const mySessionStore = new SequelizeStore({
   db: sequelize,
-  expiration: 180000,
+  expiration: 480000,
   checkExpirationInterval: 60000
 });
 
@@ -16,6 +16,7 @@ sequelize.sync({force: false});
 const PORT = 8080;
 const PUBLIC_DIR = `public`;
 const UPLOAD_DIR = `upload`;
+const {HttpCode} = require(`../constans`);
 
 const mainRouter = require(`./routes/main-route`);
 const myRouter = require(`./routes/my-route`);
@@ -39,13 +40,21 @@ app.use(session({
   saveUninitialized: false,
 }));
 
-
 app.use(`/`, mainRouter);
 app.use(`/my`, myRouter);
 app.use(`/articles`, articlesRouter);
 
 app.use(express.static(path.resolve(__dirname, PUBLIC_DIR)));
 app.use(express.static(path.resolve(__dirname, UPLOAD_DIR)));
+
+app.use((req, res) => {
+  const {user} = req.session;
+  res.status(HttpCode.NOT_FOUND).render(`errors/404`, {user});
+});
+
+app.use((err, req, res, _next) => {
+  res.status(HttpCode.INTERNAL_SERVER_ERROR).render(`errors/500`);
+});
 
 app.set(`views`, path.resolve(__dirname, `templates`));
 app.set(`view engine`, `pug`);

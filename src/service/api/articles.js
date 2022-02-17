@@ -9,8 +9,9 @@ const articleExist = require(`../middleware/article-exist`);
 const ArticleSchema = require(`../schemes/article-schema`);
 const CommentSchema = require(`../schemes/comment-schema`);
 const RouteSchema = require(`../schemes/route-params-schema`);
-const {HttpCode} = require(`../../constans`);
+const {HttpCode, TEXT_LIMIT} = require(`../../constans`);
 
+const {adapterText} = require(`../../utils`);
 
 module.exports = (app, articleService, commentService) => {
   const route = new Router();
@@ -18,13 +19,31 @@ module.exports = (app, articleService, commentService) => {
   app.use(`/articles`, route);
 
   route.get(`/`, async (req, res) => {
-    const {offset, limit, comments} = req.query;
+    const {offset, limit, comments, topArticles, lastComments} = req.query;
     let result;
 
     if (limit || offset) {
       result = await articleService.findPage({limit, offset, comments});
     } else {
       result = await articleService.findAll(comments);
+    }
+
+    if (topArticles) {
+      const resultTopArticles = await articleService.findTopArticles();
+
+      result = {
+        ...result,
+        articlesTop: adapterText(resultTopArticles, `announce`, TEXT_LIMIT).slice(0, 4)
+      };
+    }
+
+    if (lastComments) {
+      const resultLastComments = await commentService.findLastComments();
+
+      result = {
+        ...result,
+        lastComments: adapterText(resultLastComments, `text`, TEXT_LIMIT).slice(0, 4)
+      };
     }
 
     if (!result) {
@@ -70,27 +89,28 @@ module.exports = (app, articleService, commentService) => {
 
     const article = await articleService.create(req.body);
 
+    if (!article) {
+      return res.status(HttpCode.NOT_FOUND).send([{value: `Can not create article`}]);
+    }
+
     return res.status(HttpCode.CREATED).json(article);
   });
 
   route.put(`/:articleId`, [routeValidator(RouteSchema), articleExist(articleService), articleValidator(ArticleSchema)], async (req, res) => {
     const {articleId} = req.params;
-    const updateRes = await articleService.update(articleId, req.body);
+    const article = req.body;
+
+    const updateRes = await articleService.update({articleId, article});
 
     if (!updateRes) {
-      return res.status(HttpCode.NOT_FOUND).send(`Not found with ${articleId}`);
+      return res.status(HttpCode.NOT_FOUND).send([{value: `Not found with ${articleId}`}]);
     }
 
     return res.status(HttpCode.OK).send(updateRes);
   });
 
-  route.delete(`/:articleId`, async (req, res) => {
+  route.delete(`/:articleId`, [routeValidator(RouteSchema), articleExist(articleService)], async (req, res) => {
     const {articleId} = req.params;
-    const article = await articleService.findOne(articleId);
-
-    if (!article) {
-      return res.status(HttpCode.NOT_FOUND).send(`Not found`);
-    }
 
     const deletedStatus = articleService.drop(articleId);
 
@@ -101,10 +121,17 @@ module.exports = (app, articleService, commentService) => {
     return res.status(HttpCode.DELETED).send(deletedStatus);
   });
 
-  route.delete(`/:articleId/comments/:commentId`, async (req, res) => {
-    const {commentId} = req.params;
+  route.delete(`/:articleId/comments/:commentId`, [routeValidator(RouteSchema), articleExist(articleService)], async (req, res) => {
+    const {userId} = req.body;
+    const {articleId, commentId} = req.params;
 
-    const deletedRes = await commentService.drop(commentId);
+    const comment = await commentService.findOne({commentId, articleId});
+
+    if (!comment) {
+      return res.status(HttpCode.NOT_FOUND).send(`Not found`);
+    }
+
+    const deletedRes = await commentService.drop({commentId, userId, articleId});
 
     if (!deletedRes) {
       return res.status(HttpCode.NOT_FOUND).send(`Not found with ${commentId}`);

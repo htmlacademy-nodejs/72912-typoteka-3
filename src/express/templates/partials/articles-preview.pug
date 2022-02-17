@@ -6,19 +6,20 @@ section.main-page__list.preview
         ul.preview__breadcrumbs
           each category in article.categories
             li.preview__breadcrumbs-item
-              a.preview__breadcrumbs-link(href='/categories/') #{category.name}
+              a.preview__breadcrumbs-link(href=`/articles/category/${category.id}`) #{category.name}
         .preview__background
           img.preview__background-image(
-            src=article.picture ? `/img/${article.picture}` : 'skyscraper@1x.jpg'
+            src=article.picture ? `/img/${article.picture}` : '/img/skyscraper@1x.jpg'
             width='460'
             height='240'
-            srcset=article.picture ? `/img/${article.picture}` : 'img/skyscraper@1x.jpg 1x, img/skyscraper@2x.jpg 2x' alt='Фотография небоскреба'
+            srcset=article.picture ? `/img/${article.picture}` : '/img/skyscraper@1x.jpg 1x, /img/skyscraper@2x.jpg 2x' alt=article.title
           )
-        time.preview__time(datetime=article.createdAt) #{article.createdAt}
+        time.preview__time(datetime=article.createdAt)
+          +formatDate(article.createdAt, true)
         h3.preview__name
           a.preview__name-link(href=`/articles/${article.id}`) #{article.title}
         p.preview__text #{article.announce}
-        a.preview__comment(href=`/articles/${article.id}/comments/`)
+        a.preview__comment(href=`/articles/${article.id}`)
           | Комментарии
           span.preview__cloud
           b.preview__comment-count #{article.comments.length}

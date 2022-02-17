@@ -14,6 +14,8 @@ const MAX_ID_LENGTH = 6;
 
 const MAX_COMMENTS = 4;
 
+const TEXT_LIMIT = 100;
+
 const API_PREFIX = `/api`;
 
 const PATH_OF_CATEGORIES = `./data/categories.txt`;
@@ -54,8 +56,16 @@ const ARTICLES_PER_PAGE = 8;
 
 const CommentSchema = {
   TEXT_ERROR: `Комментарий содержит меньше 20 символов`,
+  TEXT_EMPTY: `Сообщение не может быть пустым, напишите что-нибудь!`,
   USER_ID: `Пользователя с таким ID не существует`
 };
+
+const CategorySchema = {
+  TEXT_MIN: `Название категории содержит меньше 5 символов`,
+  TEXT_MAX: `Название категории не может содержать больше 30 символов`,
+  TEXT_EMPTY: `Сообщение не может быть пустым, напишите что-нибудь!`,
+};
+
 
 const ArticleSchema = {
   TITLE_MIN: `Заголовок содержит меньше 30 символов`,
@@ -73,6 +83,7 @@ const ArticleSchema = {
 const UserSchema = {
   NAME: `Имя содержит некорректные символы`,
   SURNAME: `Фамилия содержит некорректные символы`,
+  SURNAME_EMPTY: `Укажите фамилию`,
   EMAIL: `Некорректный электронный адрес`,
   EMAIL_EXISTS: `Электронный адрес уже используется`,
   PASSWORD_MIN: `Пароль содержит меньше 6-ти символов`,
@@ -102,12 +113,14 @@ module.exports = {
   PATH_OF_API_LOG,
   MAX_ID_LENGTH,
   MAX_COMMENTS,
+  TEXT_LIMIT,
   API_PREFIX,
   Env,
   ARTICLES_PER_PAGE,
   CommentSchema,
   ArticleSchema,
   UserSchema,
+  CategorySchema,
   ErrorAuthMessage
 };
 

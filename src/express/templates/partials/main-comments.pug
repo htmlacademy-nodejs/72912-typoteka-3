@@ -1,0 +1,25 @@
+.main-page__section-flex
+  section.main-page__hot.hot
+    h2.hot__name
+      | Самое обсуждаемое
+      span.hot__icon.hot__icon--fire
+    ul.hot__list
+      each article in articlesTop
+        li.hot__list-item
+          a.hot__list-item(href=`/articles/${article.id}`)
+            | #{article.announce}
+            sup.hot__link-sup #{article.commentCount}
+  section.main-page__last.last
+    h2.last__name
+      | Последние комментарии
+      span.last__icon.last__icon--cloud
+    ul.last__list
+      each comment in lastComments
+        li.last__list-item
+          if comment.users.avatar
+            img.last__list-image(src=`/img/${comment.users.avatar}` width=`20` height=`20` alt=comment.users.name)
+          else
+            img.last__list-image()
+          b.last__list-name #{comment.users.name} #{comment.users.surname}
+          a.last__list-link(href=`/articles/${comment.articleId}#${comment.id}`)
+            | #{comment.text}

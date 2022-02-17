@@ -3,7 +3,7 @@ extends layout.pug
 block content
   main
     section.search-page
-      .search-page__wrapper
+      div(class=(articles.length === 0 && typeof searchValue === 'string') ? 'search-page__wrapper search-page__wrapper--empty' : 'search-page__wrapper')
         h1 Поиск
         .search.search-page__form
           form(action='/search' method='get')
@@ -13,7 +13,8 @@ block content
           if articles && articles.length > 0
             each article in articles
               .search__result
-                time.search__date(datetime=article.createDate) #{article.createDate}
-                a.search__link(href=`/articles/${article.id}`) #{article.title}
-          if articles.length === 0
+                time.search__date(datetime=article.createdAt)
+                  +formatDate(article.createdAt)
+                a.search__link(href=`/articles/${article.id}`) !{article.title.replace(searchValue, `<b>` + searchValue + `</b>`)}
+          if articles.length === 0 && typeof searchValue === 'string'
             p.search-page__empty Ничего не нашлось

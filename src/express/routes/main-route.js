@@ -1,12 +1,14 @@
 'use strict';
-
 const {Router} = require(`express`);
 const {getAPI} = require(`../api`);
 const pictureUpload = require(`../middleware/picture-upload`);
+const privateRoute = require(`../middleware/private-route`);
 const {ARTICLES_PER_PAGE} = require(`../../constans`);
 
 const mainRouter = new Router();
 const api = getAPI();
+const csrf = require(`csurf`);
+const csrfProtection = csrf();
 
 mainRouter.get(`/`, async (req, res) => {
   const {user} = req.session;
@@ -14,35 +16,52 @@ mainRouter.get(`/`, async (req, res) => {
   page = +page;
   const limit = ARTICLES_PER_PAGE;
 
-  const offset = (page - 1) * ARTICLES_PER_PAGE;
+  const offset = (page - 1) * limit;
 
-  const [{count, articles}, categories] = await Promise.all([
-    api.getArticles({limit, offset, comments: true}),
-    api.getCategories()
+  const [{count, articles, articlesTop, lastComments}, categories] = await Promise.all([
+    api.getArticles({limit, offset, comments: true, topArticles: true, lastComments: true}),
+    api.getCategories({count: true})
   ]);
 
-  const totalPages = Math.ceil(count / ARTICLES_PER_PAGE);
+  const totalPages = Math.ceil(count / limit);
 
-  res.render(`main`, {articles, categories, totalPages, page, user});
+  if (articles.length === 0) {
+    res.render(`main-empty`, {user});
+  } else {
+    res.render(`main`, {articles, categories, totalPages, page, user, articlesTop, lastComments});
+  }
+
 });
 
-mainRouter.get(`/register`, (req, res) => res.render(`sign-up`));
-mainRouter.get(`/login`, (req, res) => res.render(`login`));
+mainRouter.get(`/register`, csrfProtection, (req, res) => {
+  const {user} = req.session;
+  res.render(`sign-up`, {user, csrfToken: req.csrfToken()});
+});
+
+mainRouter.get(`/login`, csrfProtection, (req, res) => {
+  const {user} = req.session;
+  res.render(`login`, {user, csrfToken: req.csrfToken()});
+});
 
 mainRouter.get(`/search`, async (req, res) => {
   const {query: searchValue} = req.query;
+  const {user} = req.session;
 
   try {
     const articles = await api.search(searchValue);
-    res.render(`search`, {articles, searchValue});
+    res.render(`search`, {articles, user, searchValue});
   } catch (e) {
-    res.render(`search`, {articles: []});
+    res.render(`search`, {articles: [], user, searchValue});
   }
 });
 
-mainRouter.get(`/categories`, (req, res) => res.render(`all-categories`));
+mainRouter.get(`/category`, [privateRoute, csrfProtection], async (req, res) => {
+  const {user} = req.session;
+  const categories = await api.getCategories();
+  res.render(`all-categories`, {user, categories, csrfToken: req.csrfToken()});
+});
 
-mainRouter.post(`/register`, pictureUpload.single(`img`), async (req, res) => {
+mainRouter.post(`/register`, [pictureUpload.single(`img`), csrfProtection], async (req, res) => {
   const {body, file} = req;
 
   const userData = {
@@ -58,13 +77,12 @@ mainRouter.post(`/register`, pictureUpload.single(`img`), async (req, res) => {
     await api.createUser(userData);
     res.redirect(`/login`);
   } catch (e) {
-    console.log(`Main route ${e}`);
-    const validationMessage = e.message.data;
-    res.render(`sign-up`, {userData, validationMessage});
+    const validationMessage = e.response.data;
+    res.render(`sign-up`, {userData, validationMessage, csrfToken: req.csrfToken()});
   }
 });
 
-mainRouter.post(`/login`, async (req, res) => {
+mainRouter.post(`/login`, csrfProtection, async (req, res) => {
   try {
     const user = await api.auth(req.body[`user-email`], req.body[`user-password`]);
 
@@ -74,7 +92,47 @@ mainRouter.post(`/login`, async (req, res) => {
     });
   } catch (e) {
     const validationMessage = e.response.data;
-    res.render(`login`, {validationMessage});
+    res.render(`login`, {validationMessage, csrfToken: req.csrfToken()});
+  }
+});
+
+mainRouter.post(`/category`, csrfProtection, async (req, res) => {
+  const body = req.body;
+
+  try {
+    await api.addCategory({name: body[`add-category`]});
+    res.redirect(`/category`);
+  } catch (e) {
+    const validationMessage = e.response.data;
+    const categories = await api.getCategories();
+    res.render(`all-categories`, {validationMessage, categories, csrfToken: req.csrfToken()});
+  }
+
+});
+
+mainRouter.post(`/category/:categoryId`, csrfProtection, async (req, res) => {
+  const body = req.body;
+  const {categoryId} = req.params;
+  try {
+    await api.editCategory({name: body[`category-name`], id: categoryId});
+    res.redirect(`/category`);
+  } catch (e) {
+    const validationMessage = e.response.data;
+    const categories = await api.getCategories();
+    res.render(`all-categories`, {validationMessage, categories, csrfToken: req.csrfToken()});
+  }
+});
+
+mainRouter.post(`/category/:categoryId/delete`, csrfProtection, async (req, res) => {
+  const {categoryId} = req.params;
+
+  try {
+    await api.deleteCategory({categoryId});
+    res.redirect(`/category`);
+  } catch (e) {
+    const validationMessage = e.response.data;
+    const categories = await api.getCategories();
+    res.render(`all-categories`, {validationMessage, categories, csrfToken: req.csrfToken()});
   }
 });
 
