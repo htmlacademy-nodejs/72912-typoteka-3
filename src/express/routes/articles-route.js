@@ -131,11 +131,11 @@ articlesRouter.get(`/:id`, csrfProtection, async (req, res) => {
     api.getCategories({count: true})
   ]);
 
-  const filtredCategories = categories.filter((it) => {
+  const filteredCategories = categories.filter((it) => {
     return article.categories.some((it2) => it2.id === it.id);
   });
 
-  res.render(`articles/post-detail`, {article, user, filtredCategories, csrfToken: req.csrfToken()});
+  res.render(`articles/post-detail`, {article, user, filteredCategories, csrfToken: req.csrfToken()});
 
 });
 

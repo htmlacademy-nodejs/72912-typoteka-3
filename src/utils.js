@@ -40,7 +40,7 @@ const adapterText = (arr, key, limit) => {
   }));
 };
 
-const getAndSortComments = async (articles) => {
+const getAndSortComments = (articles) => {
   const comments = articles.map((item) => {
     return item.comments;
   })

@@ -13,7 +13,7 @@ block content
               +formatDate(article.createdAt, true)
             h2.post__title.title.title--main #{article.title}
             ul.post__themes.themes
-              each category in filtredCategories
+              each category in filteredCategories
                 li.themes__item
                   a.themes__item-link(href=`/articles/category/${category.id}`)
                     | #{category.name}

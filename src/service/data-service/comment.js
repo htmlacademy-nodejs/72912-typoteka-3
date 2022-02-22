@@ -60,7 +60,7 @@ class CommentService {
     });
 
     if (!articleByUser) {
-      return !!articleByUser;
+      return false;
     }
 
     const deletedRows = await this._Comment.destroy({
