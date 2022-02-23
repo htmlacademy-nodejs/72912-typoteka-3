@@ -7,7 +7,10 @@ block content
       ul.notes__list
         each article in articles
           li.notes__list-item
-            time.notes__item-time(datetime=`${article.createDate}`) #{article.createDate}
+            time.notes__item-time(datetime=`${article.createdAt}`)
+              +formatDate(article.createdAt, true)
             a.notes__item-text(href=`/articles/edit/${article.id}`) #{article.title}
-            button.notes__button.button.button--close-item(type='button')
+            form(action='/my/' + article.id method='POST')
+              input(type='hidden' name="_csrf" value=csrfToken)
+              button.notes__button.button.button--close-item(type='submit')
               span.visually-hidden Закрыть строку списка

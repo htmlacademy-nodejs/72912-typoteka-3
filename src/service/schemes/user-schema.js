@@ -22,6 +22,7 @@ module.exports = Joi.object({
   }),
   surname: Joi.string().pattern(/[^0-9$&+,:;=?@#|'<>.^*()%!]+$/).required().messages({
     'string.pattern.base': UserSchema.SURNAME,
+    'string.empty': UserSchema.SURNAME_EMPTY,
     'any.required': UserSchema.REQUIRED_FIELD
   }),
   avatar: Joi.string().allow(null, ``)

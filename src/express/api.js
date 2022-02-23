@@ -21,8 +21,8 @@ class API {
     return response.data;
   }
 
-  getArticles({offset, limit, comments}) {
-    return this._load(`/articles`, {params: {offset, limit, comments}});
+  getArticles({offset, limit, comments, topArticles, lastComments, userId}) {
+    return this._load(`/articles`, {params: {offset, limit, comments, topArticles, lastComments, userId}});
   }
 
   getArticle(id) {
@@ -35,6 +35,10 @@ class API {
 
   async getCategories(count) {
     return this._load(`/category`, {params: {count}});
+  }
+
+  async getCategory({categoryId, offset, limit}) {
+    return this._load(`/category/${categoryId}`, {params: {offset, limit}});
   }
 
   async createArticle(data) {
@@ -62,6 +66,52 @@ class API {
     return this._load(`/user`, {
       method: HttpMethod.POST,
       data
+    });
+  }
+
+  async deleteArticle({articleId, userId}) {
+    return this._load(`/articles/${articleId}`, {
+      method: HttpMethod.DELETE,
+      data: {
+        userId
+      }
+    });
+  }
+
+  async deleteComment({articleId, commentId, userId}) {
+
+    return this._load(`/articles/${articleId}/comments/${commentId}`, {
+      method: HttpMethod.DELETE,
+      data: {
+        articleId,
+        commentId,
+        userId
+      }
+    });
+  }
+
+  async addCategory(data) {
+    return this._load(`/category`, {
+      method: HttpMethod.POST,
+      data
+    });
+  }
+
+  async editCategory({id, name}) {
+    return this._load(`/category/${id}`, {
+      method: HttpMethod.PUT,
+      data: {
+        name,
+      }
+    });
+  }
+
+  async deleteCategory({categoryId}) {
+    return this._load(`/category/${categoryId}/delete`, {
+      method: HttpMethod.DELETE,
+      data: {
+        categoryId
+      }
     });
   }
 

@@ -19,6 +19,8 @@ const mockArticles = [
     "fullText": `Таких предложений больше нет! Это настоящая находка для коллекционера! При покупке с меня бесплатная доставка в черте города. Если найдёте дешевле — сброшу цену.`,
     "picture": `item09.jpg`,
     "categories": [`Журналы`],
+    "createdAt": `12-01-2022`,
+    "user": `ivanov@example.com`,
     "comments": [
       {
         "text": `Неплохо, но дорого. Совсем немного... Оплата наличными или перевод на карту?`,
@@ -44,6 +46,7 @@ const mockArticles = [
     "fullText": `Таких предложений больше нет! Это настоящая находка для коллекционера! При покупке с меня бесплатная доставка в черте города. Если найдёте дешевле — сброшу цену.`,
     "picture": `item09.jpg`,
     "categories": [`Игры`],
+    "createdAt": `11-01-2022`,
     "comments": [
       {
         "text": `Неплохо, но дорого. Совсем немного... Оплата наличными или перевод на карту?`,
@@ -69,6 +72,7 @@ const mockArticles = [
     "fullText": `Таких предложений больше нет! Это настоящая находка для коллекционера! При покупке с меня бесплатная доставка в черте города. Если найдёте дешевле — сброшу цену.`,
     "picture": `item09.jpg`,
     "categories": [`Животные`],
+    "createdAt": `14-01-2022`,
     "comments": [
       {
         "text": `Неплохо, но дорого. Совсем немного... Оплата наличными или перевод на карту?`,
@@ -138,7 +142,7 @@ describe(`API returns a list of all articles`, () => {
 
   test(`Returns a list of 3 articles`, () => expect(response.body.length).toBe(3));
 
-  test(`First article's id equals 1`, () => expect(response.body[0].id).toBe(1));
+  test(`First article's id equals 3`, () => expect(response.body[0].id).toBe(3));
 
 });
 

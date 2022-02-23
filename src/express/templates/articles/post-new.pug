@@ -14,7 +14,7 @@ block content
                 .new-publication__date-form-division
                   .new-publication__date-block
                     label(for='new-publication-date' aria-label='Календарь')
-                    input#new-publication-date(type='text' name='date' value=articleData.createDate placeholder='2019-03-21')
+                    input#new-publication-date(type='text' name='date' value=article.createdAt placeholder='2019-03-21')
                     +insertOneMessage(validationMessage, 'date')
               button.new-publication__button.button.button--colored(type='submit') Опубликовать
             a.popup__button.button.button--popup-close(aria-label='Закрыть окно')
@@ -24,26 +24,35 @@ block content
               .form__wrapper.form__wrapper--intro
                 .form__field
                   label
-                    input(type='text' name='title' placeholder='Заголовок' value=articleData.title required='')
+                    input(type='text' name='title' placeholder='Заголовок' value=article.title required='')
                     +insertOneMessage(validationMessage, 'title')
                 .form__field.form__field--post-image
                   label
-                    input#image-name-field(type='text' name='photo' placeholder='Фотография' value=articleData.picture readonly='')
+                    input#image-name-field(type='text' name='photo' placeholder='Фотография' value=article.picture readonly='')
                     +insertOneMessage(validationMessage, 'picture')
                   .form__image-loader.form__image-loader--publication
                     label
                       input.visually-hidden(type='file' name='img')
                       | Обзор
                 .new-publication__category-wrapper
-                  a.new-publication__form-link.button.button--transparent(href='/categories') Добавить категорию
+                  each category, idx in categories
+                      div(class='new-publication__checkbox new-publication__checkbox--auto')
+                        input(id=`checkbox-auto-${idx}`
+                          type='checkbox'
+                          name='category'
+                          value=category.id
+                          checked=article.categories ? article.categories.includes(String(category.id)) : false
+                        )
+                        label(for=`checkbox-auto-${idx}`) #{category.name}
+                  a.new-publication__form-link.button.button--transparent(href='/category') Добавить категорию
                   +insertOneMessage(validationMessage, 'categories')
               .form__wrapper.form__wrapper--text
                 .form__field.form__field--publication-text
                   label
-                    textarea(rows='5' name='announce' placeholder='Анонс публикации') #{articleData.announce}
+                    textarea(rows='5' name='announce' placeholder='Анонс публикации') #{article.announce}
                     +insertOneMessage(validationMessage, 'announce')
                 .form__field.form__field--publication-text
                   label
-                    textarea(rows='10' name='fullText' placeholder='Полный текст публикации') #{articleData.fullText}
+                    textarea(rows='10' name='fullText' placeholder='Полный текст публикации') #{article.fullText}
                     +insertOneMessage(validationMessage, 'fullText')
         +insertErrorMessage(validationMessage)

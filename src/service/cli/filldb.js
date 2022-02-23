@@ -113,7 +113,7 @@ module.exports = {
         name: `Пётр`,
         surname: `Петров`,
         avatar: `avatar2.jpg`,
-        role: `server`
+        role: `user`
       }
     ];
 

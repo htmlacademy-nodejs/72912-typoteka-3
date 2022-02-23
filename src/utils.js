@@ -33,10 +33,55 @@ const prepareErrors = (errors) => {
   return errors.response.data.split(`\n`);
 };
 
+const adapterText = (arr, key, limit) => {
+  return arr.map((item) => ({
+    ...item,
+    [key]: item[key].length > 100 ? item[key].slice(0, limit).trim().concat(`...`) : item[key]
+  }));
+};
+
+const getAndSortComments = (articles) => {
+  const comments = articles.map((item) => {
+    return item.comments;
+  })
+  .reduce((acc, val) => acc.concat(val), [])
+  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  return comments;
+};
+
+const convertDate = (dateString, onlyDate) => {
+  const date = new Date(dateString);
+  let format;
+  if (onlyDate) {
+    format = date.toLocaleString(`ru-RU`, {year: `numeric`, month: `numeric`, day: `numeric`});
+  } else {
+    format = date.toLocaleString(`ru-RU`, {year: `numeric`, month: `numeric`, day: `numeric`, hour: `2-digit`, minute: `2-digit`});
+  }
+
+  return format;
+};
+
+const getCategories = (categories) => {
+  if (Array.isArray(categories)) {
+    return categories;
+  }
+
+  if (typeof categories === `string`) {
+    return [categories];
+  }
+
+  return [];
+};
+
 module.exports = {
   getRandomInt,
   shuffle,
   getRandomDate,
   ensureArray,
-  prepareErrors
+  prepareErrors,
+  adapterText,
+  getAndSortComments,
+  convertDate,
+  getCategories
 };

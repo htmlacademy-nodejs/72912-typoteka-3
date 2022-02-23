@@ -8,23 +8,25 @@ block content
         h2.visually-hidden Основное содержание
         .post__wrapper
           .post__head
-            a.post__backwards.button.button--backwards(href='#') Назад
-            time.post__date(datetime='2019-03-21T20:33') #{article.createdAt}
+            a.post__backwards.button.button--backwards(href='/') Назад
+            time.post__date(datetime='2019-03-21T20:33')
+              +formatDate(article.createdAt, true)
             h2.post__title.title.title--main #{article.title}
             ul.post__themes.themes
-              each category in article.categories
+              each category in filteredCategories
                 li.themes__item
-                  a.themes__item-link(href='#')
+                  a.themes__item-link(href=`/articles/category/${category.id}`)
                     | #{category.name}
                     sup #{category.count}
                   button.themes__remove-btn(type='button') Удалить категорию
-
-          .post__picture
-            img(src=article.picture ? article.picture : '/img/sea-fullsize@1x.jpg' alt='пейзаж море, скалы, пляж')
+          if article.picture
+            .post__picture
+              img(src=article.picture ? `/img/${article.picture}` : '/img/sea-fullsize@1x.jpg' alt='пейзаж море, скалы, пляж')
           .post__text
             h3 #{article.title}
             p
               | #{article.announce}
+              | #{article.fullText}
       .post__wrapper.post__wrapper--comments
         section.post__comments.comments
           if article.comments.length
@@ -39,8 +41,9 @@ block content
                       img()
                   .comments__text
                     .comments__head
-                      p #{comment.users.name} #{comment.users.surname} •
-                      time.comments__date(datetime='2019-03-21T20:33') #{comment.createdAt}
+                      p(id=comment.id) #{comment.users.name} #{comment.users.surname} •
+                      time.comments__date(datetime='2019-03-21T20:33')
+                        +formatDate(comment.createdAt)
                     p.comments__message #{comment.text}
           else
             h2.comments__title.title.title--middle Комментарии отсутствуют
@@ -55,6 +58,15 @@ block content
                     img()
                 label
                   textarea(rows='1' name='message' placeholder='Присоединиться к обсуждению')
-                  +insertOneMessage(validationMessage, 'message')
                 button.comments__button.button.button--colored(type='submit') Опубликовать
-            +insertErrorMessage(validationMessage)
+              if validationMessage
+                p.comments__error
+                  +insertOneMessage(validationMessage, 'text')
+          else
+            .comments__footer.comments__footer--visitor
+              button.comments__button.button.button--colored(type='submit' onClick="location.href='/login'") Войти
+              .comments__registration
+                p.text.text--signature
+                  b.title.title--small Регистрация
+                  | Чтобы присоединиться к переписке нужно зарегистрироваться
+

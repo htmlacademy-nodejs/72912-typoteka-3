@@ -4,18 +4,24 @@ header(class={header: true, "header--logged": user})
     span.logo__name Типотека
   if user
     if user.role === 'admin'
-      button(class="button button--colored header__button-new") Новая запись
+      button(class="button button--colored header__button-new" onClick='location.href = "/articles/add"') Новая запись
       div(class="header__dropdown")
         a(href="#", class="button button--burger header__burger") Открыть меню
         ul(class="navigation header__navigation")
           li(class="navigation__item")
-            a(href="main.html") Пункт меню
+            a(href="/") Главная страница
           li(class="navigation__item")
-            a(href="main.html") Пункт меню
+            a(href="/my") Мои записи
           li(class="navigation__item")
-            a(href="main.html") Пункт меню
+            a(href="/category") Категории
           li(class="navigation__item")
-            a(href="main.html") Пункт меню
+            a(href="/my/comments") Комментарии
+          li(class="navigation__item")
+            a(href="/register") Регистрация
+          li(class="navigation__item")
+            a(href="/search") Поиск
+          li(class="navigation__item")
+            a(href="/logout") Выйти
     else if user.role === 'user'
       nav(class="header__nav")
         ul(class="header__nav-list")
@@ -35,4 +41,4 @@ header(class={header: true, "header--logged": user})
           a.header__registration(href='/register') Регистрация
         li.header__list-item
           a.header__enter(href='/login') Вход с паролем
-  a.header__search.button.button--search(href='#' aria-label='поиск по сайту')
+  a.header__search.button.button--search(href='/search' aria-label='поиск по сайту')
