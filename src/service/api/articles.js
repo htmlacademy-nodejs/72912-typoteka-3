@@ -11,7 +11,7 @@ const CommentSchema = require(`../schemes/comment-schema`);
 const RouteSchema = require(`../schemes/route-params-schema`);
 const {HttpCode, TEXT_LIMIT} = require(`../../constans`);
 
-const {adapterText} = require(`../../utils`);
+const {adapterText, adapterComment} = require(`../../utils`);
 
 module.exports = (app, articleService, commentService) => {
   const route = new Router();
@@ -79,8 +79,15 @@ module.exports = (app, articleService, commentService) => {
 
   route.post(`/:articleId/comments`, [routeValidator(RouteSchema), articleExist(articleService), commentValidator(CommentSchema)], async (req, res) => {
     const {articleId} = req.params;
-    const comment = await commentService.create(articleId, req.body);
+    const io = req.app.locals.socketio;
 
+    const comment = await commentService.create(articleId, req.body);
+    const resultTopArticles = await articleService.findTopArticles();
+
+    const articlesTop = adapterText(resultTopArticles, `announce`, TEXT_LIMIT).slice(0, 4);
+    const adaptedComment = adapterComment(comment);
+
+    io.emit(`comment:create`, {adaptedComment, articlesTop});
     return res.status(HttpCode.CREATED).json(comment);
 
   });
@@ -92,6 +99,7 @@ module.exports = (app, articleService, commentService) => {
     if (!article) {
       return res.status(HttpCode.NOT_FOUND).send([{value: `Can not create article`}]);
     }
+
 
     return res.status(HttpCode.CREATED).json(article);
   });

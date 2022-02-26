@@ -19,7 +19,7 @@
           if comment.users.avatar
             img.last__list-image(src=`/img/${comment.users.avatar}` width=`20` height=`20` alt=comment.users.name)
           else
-            img.last__list-image()
+            img.last__list-image(src=`/img/icons/smile.svg` width=`20` height=`20`)
           b.last__list-name #{comment.users.name} #{comment.users.surname}
           a.last__list-link(href=`/articles/${comment.articleId}#${comment.id}`)
             | #{comment.text}
