@@ -1,6 +1,9 @@
 'use strict';
 
 const express = require(`express`);
+const http = require(`http`);
+const socket = require(`../lib/socket`);
+
 const chalk = require(`chalk`);
 const {DEFAULT_PORT, HttpCode, API_PREFIX} = require(`../../constans`);
 const {getLogger} = require(`../lib/logger`);
@@ -9,6 +12,10 @@ const routes = require(`../api`);
 const sequelize = require(`../lib/sequelize`);
 
 const app = express();
+const server = http.createServer(app);
+const io = socket(server);
+app.locals.socketio = io;
+
 app.use(express.json());
 
 app.use(API_PREFIX, routes);
@@ -46,7 +53,7 @@ module.exports = {
     logger.info(chalk.green(`Соединение с БД установлено`));
 
     const port = parseInt(args, 10) || DEFAULT_PORT;
-    app
+    server
       .listen(port, () => {
         logger.info(`Ожидаю соединений на ${port}`);
       })

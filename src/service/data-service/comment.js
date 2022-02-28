@@ -70,11 +70,25 @@ class CommentService {
     return !!deletedRows;
   }
 
-  create(articleId, text) {
-    return this._Comment.create({
+  async create(articleId, text) {
+    const {id} = await this._Comment.create({
       articleId,
       ...text
     });
+
+    const comment = await this._Comment.findByPk(id, {
+      include: [{
+        model: this._User,
+        as: Aliase.USERS,
+        attributes: [
+          `name`,
+          `surname`,
+          `avatar`
+        ]
+      }]
+    });
+
+    return comment;
   }
 }
 

@@ -62,6 +62,21 @@ const convertDate = (dateString, onlyDate) => {
   return format;
 };
 
+const adapterComment = (comment) => {
+  const limit = 100;
+
+  const adaptedComment = {
+    'id': comment.id,
+    'articleId': comment.articleId,
+    'text': comment.text.length > 100 ? comment.text.slice(0, limit).trim().concat(`...`) : comment.text,
+    'avatar': comment.users.avatar,
+    'name': comment.users.name,
+    'surname': comment.users.surname
+  };
+
+  return adaptedComment;
+};
+
 const getCategories = (categories) => {
   if (Array.isArray(categories)) {
     return categories;
@@ -81,6 +96,7 @@ module.exports = {
   ensureArray,
   prepareErrors,
   adapterText,
+  adapterComment,
   getAndSortComments,
   convertDate,
   getCategories
