@@ -82,8 +82,17 @@ articlesRouter.post(`/:id`, [auth, csrfProtection], async (req, res) => {
     res.redirect(`/articles/${id}`);
   } catch (e) {
     const validationMessage = e.response.data;
-    const article = await api.getArticle(id, true);
-    res.render(`articles/post-detail`, {id, article, user, validationMessage, csrfToken: req.csrfToken()});
+
+    const [article, categories] = await Promise.all([
+      api.getArticle(id, true),
+      api.getCategories({count: true})
+    ]);
+
+    const filteredCategories = categories.filter((it) => {
+      return article.categories.some((it2) => it2.id === it.id);
+    });
+
+    res.render(`articles/post-detail`, {id, article, filteredCategories, user, validationMessage, csrfToken: req.csrfToken()});
   }
 
 });
