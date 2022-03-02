@@ -125,6 +125,7 @@ mainRouter.post(`/category/:categoryId`, csrfProtection, async (req, res) => {
 
 mainRouter.post(`/category/:categoryId/delete`, csrfProtection, async (req, res) => {
   const {categoryId} = req.params;
+  const {user} = req.session;
 
   try {
     await api.deleteCategory({categoryId});
@@ -132,7 +133,7 @@ mainRouter.post(`/category/:categoryId/delete`, csrfProtection, async (req, res)
   } catch (e) {
     const validationMessage = e.response.data;
     const categories = await api.getCategories();
-    res.render(`all-categories`, {validationMessage, categories, csrfToken: req.csrfToken()});
+    res.render(`all-categories`, {validationMessage, categories, user, csrfToken: req.csrfToken()});
   }
 });
 
