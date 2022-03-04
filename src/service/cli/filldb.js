@@ -11,7 +11,11 @@ const {
   PATH_OF_SENTENCES,
   PATH_OF_TITLES,
   PATH_OF_COMMENTS,
-  MAX_COMMENTS
+  MAX_COMMENTS,
+  MIN_ANNOUNCE_STRINGS,
+  MAX_ANNOUNCE_STRINGS,
+  MIN_COMMENT_STRINGS,
+  MAX_COMMENT_STRINGS
 } = require(`../../constans`);
 
 const {getRandomInt, shuffle} = require(`../../utils`);
@@ -40,7 +44,7 @@ const generatePosts = (count, titles, sentences, categories, comments, users) =>
     .fill({})
     .map(() => ({
       title: titles[getRandomInt(0, titles.length - 1)],
-      announce: shuffle(sentences).slice(1, 5).join(` `),
+      announce: shuffle(sentences).slice(MIN_ANNOUNCE_STRINGS, MAX_ANNOUNCE_STRINGS).join(` `),
       fullText: shuffle(sentences).slice(1, getRandomInt(1, sentences.length - 1)).join(` `),
       categories: getRandomSubarray(categories),
       comments: generateComments(getRandomInt(1, MAX_COMMENTS), comments, users),
@@ -51,7 +55,7 @@ const generatePosts = (count, titles, sentences, categories, comments, users) =>
 const generateComments = (count, comments, users) => (
   Array(count).fill({}).map(() => ({
     text: shuffle(comments)
-      .slice(0, getRandomInt(1, 3))
+      .slice(0, getRandomInt(MIN_COMMENT_STRINGS, MAX_COMMENT_STRINGS))
       .join(` `),
     user: users[getRandomInt(0, users.length - 1)].email
   }))

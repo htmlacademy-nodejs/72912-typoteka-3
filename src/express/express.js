@@ -5,10 +5,12 @@ const session = require(`express-session`);
 const sequelize = require(`../service/lib/sequelize`);
 const SequelizeStore = require(`connect-session-sequelize`)(session.Store);
 
+const {EXPIRATION, EXPIRATION_INTERVAL} = require(`../constans`);
+
 const mySessionStore = new SequelizeStore({
   db: sequelize,
-  expiration: 480000,
-  checkExpirationInterval: 60000
+  expiration: EXPIRATION,
+  checkExpirationInterval: EXPIRATION_INTERVAL
 });
 
 sequelize.sync({force: false});
