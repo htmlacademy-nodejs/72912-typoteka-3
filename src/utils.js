@@ -1,5 +1,7 @@
 'use strict';
 
+const {TEXT_LIMIT} = require(`./constans`);
+
 const getRandomInt = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -36,7 +38,7 @@ const prepareErrors = (errors) => {
 const adapterText = (arr, key, limit) => {
   return arr.map((item) => ({
     ...item,
-    [key]: item[key].length > 100 ? item[key].slice(0, limit).trim().concat(`...`) : item[key]
+    [key]: item[key].length > TEXT_LIMIT ? item[key].slice(0, limit).trim().concat(`...`) : item[key]
   }));
 };
 
@@ -63,12 +65,11 @@ const convertDate = (dateString, onlyDate) => {
 };
 
 const adapterComment = (comment) => {
-  const limit = 100;
 
   const adaptedComment = {
     'id': comment.id,
     'articleId': comment.articleId,
-    'text': comment.text.length > 100 ? comment.text.slice(0, limit).trim().concat(`...`) : comment.text,
+    'text': comment.text.length > TEXT_LIMIT ? comment.text.slice(0, TEXT_LIMIT).trim().concat(`...`) : comment.text,
     'avatar': comment.users.avatar,
     'name': comment.users.name,
     'surname': comment.users.surname
