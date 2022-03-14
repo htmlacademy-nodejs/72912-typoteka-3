@@ -5,3 +5,9 @@ DB_PORT - порт для подключения к БД
 DB_NAME - название базы данных
 DB_USER - имя пользователя
 DB_PASSWORD - пароль
+SESSION_SECRET - секретный ключ
+
+## MOCK USER
+
+admin@example.com - login
+123456 - password

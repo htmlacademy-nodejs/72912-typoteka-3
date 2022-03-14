@@ -22,7 +22,7 @@ block content
                 span.visually-hidden Редактировать категорию
               button.category__button.button.button--category(type='submit') Сохранить
             div
-              form(action='/category/' + category.id + '/delete' method='POST')
+              form(action=`/category/${category.id}/delete` method='POST')
                 input(type='hidden' name='_csrf' value=csrfToken)
                 button.category__button.button.button--category(type='sumbmit') Удалить
 

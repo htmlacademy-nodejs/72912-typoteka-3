@@ -57,8 +57,8 @@ const PATH_OF_COMMENTS = `./data/comments.txt`;
 const PATH_OF_API_LOG = `./logs/api.log`;
 
 const ExitCode = {
-  error: 1,
-  succes: 0
+  ERROR: 1,
+  SUCCESS: 0
 };
 
 const HttpCode = {

@@ -30,10 +30,10 @@ module.exports = (app, service) => {
   route.post(`/`, categoryValidator(CategorySchema), async (req, res) => {
     const category = await service.create(req.body);
     if (!category) {
-      res.status(HttpCode.BAD_REQUEST).send([{value: `ошибка`}]);
-    } else {
-      res.status(HttpCode.CREATED).json(category);
+      return res.status(HttpCode.BAD_REQUEST).send([{value: `ошибка`}]);
     }
+
+    return res.status(HttpCode.CREATED).json(category);
   });
 
   route.put(`/:categoryId`, categoryValidator(CategorySchema), async (req, res) => {
@@ -43,9 +43,9 @@ module.exports = (app, service) => {
     const categoryRes = await service.update({categoryId, category});
     if (!category) {
       res.status(HttpCode.BAD_REQUEST).send([{value: `ошибка`}]);
-    } else {
-      res.status(HttpCode.CREATED).send(categoryRes);
     }
+
+    return res.status(HttpCode.CREATED).send(categoryRes);
   });
 
   route.delete(`/:categoryId/delete`, async (req, res) => {

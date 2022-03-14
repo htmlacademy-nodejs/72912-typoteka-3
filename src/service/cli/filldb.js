@@ -84,7 +84,7 @@ module.exports = {
       await sequelize.authenticate();
     } catch (err) {
       logger.info(chalk.red(`Не удалось установить соединение с БД: ${err.message}`));
-      process.exit(1);
+      process.exit(ExitCode.ERROR);
     }
 
     logger.info(chalk.green(`Соединение с БД установлено`));
@@ -95,7 +95,7 @@ module.exports = {
 
     if (countPosts > MAX_POSTS) {
       console.info(chalk.red(`Не больше 1000 публикаций`));
-      process.exit(ExitCode.error);
+      process.exit(ExitCode.ERROR);
     }
 
     const titles = await asyncReadFile(PATH_OF_TITLES);
@@ -105,8 +105,8 @@ module.exports = {
 
     const users = [
       {
-        email: `ivanov@example.com`,
-        passwordHash: await passwordUtils.hash(`qwert1234`),
+        email: `admin@example.com`,
+        passwordHash: await passwordUtils.hash(`123456`),
         name: `Иван`,
         surname: `Иванов`,
         avatar: `avatar1.jpg`,
