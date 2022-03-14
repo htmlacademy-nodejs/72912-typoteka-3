@@ -5,10 +5,10 @@ const http = require(`http`);
 const socket = require(`../lib/socket`);
 
 const chalk = require(`chalk`);
-const {DEFAULT_PORT, HttpCode, API_PREFIX} = require(`../../constans`);
+const {DEFAULT_PORT, HttpCode, API_PREFIX, ExitCode} = require(`../../constans`);
 const {getLogger} = require(`../lib/logger`);
 const logger = getLogger({name: `api`});
-const routes = require(`../api`);
+const routes = require(`../lib/routes`);
 const sequelize = require(`../lib/sequelize`);
 
 const app = express();
@@ -35,7 +35,7 @@ app.use((req, res) => {
 });
 
 app.use((err, _req, _res, _next) => {
-  logger.error(`An error occurred on processing request: ${err.messgae}`);
+  logger.error(`An error occurred on processing request: ${err.message}`);
 });
 
 module.exports = {
@@ -47,7 +47,7 @@ module.exports = {
       await sequelize.authenticate();
     } catch (err) {
       logger.info(chalk.red(`Не удалось установить соединение с БД: ${err.message}`));
-      process.exit(1);
+      process.exit(ExitCode.ERROR);
     }
 
     logger.info(chalk.green(`Соединение с БД установлено`));

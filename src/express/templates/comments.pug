@@ -18,7 +18,7 @@ block content
                 if article.id === comment.articleId
                   a.publication__item-text(href=`/articles/${article.id}`) #{comment.text}
                   p.publication__text-strong #{article.title}
-                  form(action='/my/comments/' + comment.id method='POST')
+                  form(action=`/my/comments/${comment.id}` method='POST')
                     input(type='hidden' name='_csrf' value=csrfToken)
                     input(type='hidden' name='articleId' value=article.id)
                     button.publication__button.button.button--close-item(type='submit')

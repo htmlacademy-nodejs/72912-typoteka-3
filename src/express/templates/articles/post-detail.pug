@@ -8,7 +8,7 @@ block content
         h2.visually-hidden Основное содержание
         .post__wrapper
           .post__head
-            a.post__backwards.button.button--backwards(href='/') Назад
+            a.post__backwards.button.button--backwards(href='#' onClick='history.back()') Назад
             time.post__date(datetime='2019-03-21T20:33')
               +formatDate(article.createdAt, true)
             h2.post__title.title.title--main #{article.title}
@@ -49,7 +49,7 @@ block content
             h2.comments__title.title.title--middle Комментарии отсутствуют
           if user
             .comments__footer.comments__footer--user
-              form(action='/articles/' + article.id method='POST')
+              form(action=`/articles/${article.id}` method='POST')
                 input(type='hidden' name="_csrf" value=csrfToken)
                 .comments__avatar.avatar
                   if user.avatar

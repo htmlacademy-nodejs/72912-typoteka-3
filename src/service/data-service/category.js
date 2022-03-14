@@ -8,6 +8,7 @@ class CategoryService {
     this._Article = sequelize.models.Article;
     this._Category = sequelize.models.Category;
     this._ArticleCategory = sequelize.models.ArticleCategory;
+    this._sequelize = sequelize;
   }
 
   async findAll(needCount) {
@@ -16,13 +17,7 @@ class CategoryService {
         attributes: [
           `id`,
           `name`,
-          [
-            Sequelize.fn(
-                `COUNT`,
-                `*`
-            ),
-            `count`
-          ]
+          [Sequelize.fn(`COUNT`, Sequelize.col(`articleCategories.CategoryId`)), `count`]
         ],
         group: [Sequelize.col(`Category.id`)],
         include: [{
@@ -31,7 +26,8 @@ class CategoryService {
           attributes: []
         }]
       });
-      return result.map((it) => it.get());
+
+      return result.map((it) => ({...it.get(), count: it.get().count}));
     } else {
       return await this._Category.findAll({raw: true});
     }

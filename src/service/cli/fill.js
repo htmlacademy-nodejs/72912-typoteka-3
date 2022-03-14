@@ -81,7 +81,7 @@ module.exports = {
 
     if (countPosts > MAX_POSTS) {
       console.info(chalk.red(`Не больше 1000 публикаций`));
-      process.exit(ExitCode.error);
+      process.exit(ExitCode.ERROR);
     }
 
     const titles = await asyncReadFile(PATH_OF_TITLES);
@@ -138,10 +138,10 @@ module.exports = {
     try {
       await fs.writeFile(`generate-fill-db.sql`, content);
       console.info(chalk.green(`Operation success. File created`));
-      process.exit(ExitCode.succes);
+      process.exit(ExitCode.SUCCESS);
     } catch (err) {
       console.info(chalk.red(`Can't write data to file...`));
-      process.exit(ExitCode.error);
+      process.exit(ExitCode.ERROR);
     }
 
   }

@@ -15,6 +15,6 @@ block content
               .search__result
                 time.search__date(datetime=article.createdAt)
                   +formatDate(article.createdAt)
-                a.search__link(href=`/articles/${article.id}`) !{article.title.replace(searchValue, `<b>` + searchValue + `</b>`)}
+                a.search__link(href=`/articles/${article.id}`) !{article.title.replace(searchValue, `<b>${searchValue}</b>`)}
           if articles.length === 0 && typeof searchValue === 'string'
             p.search-page__empty Ничего не нашлось

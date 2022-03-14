@@ -10,7 +10,7 @@ module.exports = (schema) => async (req, res, next) => {
     const {details} = e;
 
     const listErrors = details.map(({message, context}) => {
-      let error = {
+      const error = {
         type: context.label,
         value: message
       };
